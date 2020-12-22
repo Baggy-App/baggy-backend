@@ -5,7 +5,7 @@ defmodule BaggyBackend.Repo.Migrations.CreateHouses do
     create table(:houses) do
       add :name, :string
       add :code, :string
-      add :passcode, :integer
+      add :passcode, :string
 
       timestamps()
     end
