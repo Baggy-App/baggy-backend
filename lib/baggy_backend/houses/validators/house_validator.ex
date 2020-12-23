@@ -2,11 +2,9 @@ defmodule BaggyBackend.Houses.House.Validator do
   import Ecto.Changeset
 
   def validate_passcode_strength(changeset) do
-    # valid_passcode = fn passcode_chars ->    end
     passcode_strength_validator = fn :passcode, passcode -> 
       passcode_chars = String.graphemes passcode
       valid_passcode? = !(has_only_repeated_characters?(passcode_chars) || has_only_sequential_digits?(passcode_chars))
-      IO.inspect !has_only_repeated_characters?(passcode_chars) && has_only_sequential_digits?(passcode_chars)
       if valid_passcode? do
         []
       else
