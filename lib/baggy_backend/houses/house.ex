@@ -1,6 +1,7 @@
 defmodule BaggyBackend.Houses.House do
   use Ecto.Schema
   import Ecto.Changeset
+  alias BaggyBackend.Houses.House.Validator
 
   schema "houses" do
     field :code, :string
@@ -16,7 +17,8 @@ defmodule BaggyBackend.Houses.House do
     |> cast(attrs, [:name, :code, :passcode])
     |> validate_required([:name, :code, :passcode])
     |> validate_length(:code, min: 4, max: 8)
-    |> validate_length(:passcode, is: 4)
+    |> validate_length(:passcode, is: 6)
+    |> Validator.validate_passcode_strength()
     |> unique_constraint(:code)
   end
 end
