@@ -13,7 +13,7 @@ defmodule BaggyBackend.Products.ProductList do
   def changeset(product_list, attrs) do
     product_list
     |> cast(attrs, [:name, :house_id])
+    |> validate_required([:name, :house_id])
     |> foreign_key_constraint(:house_id)
-    |> validate_required([:name])
   end
 end
