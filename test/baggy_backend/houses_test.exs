@@ -12,6 +12,7 @@ defmodule BaggyBackend.HousesTest do
     @invalid_code %{code: "123", name: "Any name really", passcode: "512433"}
     @invalid_passcode_repeated %{code: "a45bn0", name: "I mean any name", passcode: "444444"}
     @invalid_passcode_sequential %{code: "a45bn0", name: "I mean any name", passcode: "345678"}
+    @invalid_passcode_non_numeric %{code: "a45bn0", name: "I mean any name", passcode: "3a5678"}
 
     def house_fixture(attrs \\ %{}) do
       {:ok, house} =
@@ -53,6 +54,10 @@ defmodule BaggyBackend.HousesTest do
 
     test "create_house/1 with sequential passcode returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Houses.create_house(@invalid_passcode_sequential)
+    end
+
+    test "create_house/1 with non numeric passcode returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Houses.create_house(@invalid_passcode_non_numeric)
     end
 
     test "update_house/2 with valid data updates the house" do
