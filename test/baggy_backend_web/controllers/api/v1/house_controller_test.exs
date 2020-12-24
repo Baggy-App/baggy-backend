@@ -4,17 +4,9 @@ defmodule BaggyBackendWeb.Api.V1.HouseControllerTest do
   alias BaggyBackend.Houses
   alias BaggyBackend.Houses.House
 
-  @create_attrs %{
-    code: "some code",
-    name: "some name",
-    passcode: 42
-  }
-  @update_attrs %{
-    code: "some updated code",
-    name: "some updated name",
-    passcode: 43
-  }
-  @invalid_attrs %{code: nil, name: nil, passcode: nil}
+  @create_attrs %{code: "a45bn0", name: "My House", passcode: "531361"}
+  @update_attrs %{code: "bbbbbb", name: "My Updated House", passcode: "431555"}
+  @invalid_attrs %{code: "123", name: "Any non-nil name really", passcode: "456789"}
 
   def fixture(:house) do
     {:ok, house} = Houses.create_house(@create_attrs)
@@ -40,10 +32,10 @@ defmodule BaggyBackendWeb.Api.V1.HouseControllerTest do
       conn = get(conn, Routes.api_v1_house_path(conn, :show, id))
 
       assert %{
-               "id" => id,
-               "code" => "some code",
-               "name" => "some name",
-               "passcode" => 42
+               "id" => _id,
+               "code" => "a45bn0",
+               "name" => "My House",
+               "passcode" => "531361"
              } = json_response(conn, 200)["data"]
     end
 
@@ -62,11 +54,11 @@ defmodule BaggyBackendWeb.Api.V1.HouseControllerTest do
 
       conn = get(conn, Routes.api_v1_house_path(conn, :show, id))
 
-      assert %{
-               "id" => id,
-               "code" => "some updated code",
-               "name" => "some updated name",
-               "passcode" => 43
+  assert %{
+               "id" => _id,
+               "code" => "bbbbbb",
+               "name" => "My Updated House",
+               "passcode" => "431555"
              } = json_response(conn, 200)["data"]
     end
 

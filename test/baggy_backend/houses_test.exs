@@ -6,9 +6,12 @@ defmodule BaggyBackend.HousesTest do
   describe "houses" do
     alias BaggyBackend.Houses.House
 
-    @valid_attrs %{code: "some code", name: "some name", passcode: 42}
-    @update_attrs %{code: "some updated code", name: "some updated name", passcode: 43}
+    @valid_attrs %{code: "a45bn0", name: "My House", passcode: "531361"}
+    @update_attrs %{code: "bbbbbb", name: "My Updated House", passcode: "431555"}
     @invalid_attrs %{code: nil, name: nil, passcode: nil}
+    @invalid_code %{code: "123", name: "Any name really", passcode: "512433"}
+    @invalid_passcode_repeated %{code: "a45bn0", name: "I mean any name", passcode: "444444"}
+    @invalid_passcode_sequential %{code: "a45bn0", name: "I mean any name", passcode: "345678"}
 
     def house_fixture(attrs \\ %{}) do
       {:ok, house} =
@@ -31,21 +34,33 @@ defmodule BaggyBackend.HousesTest do
 
     test "create_house/1 with valid data creates a house" do
       assert {:ok, %House{} = house} = Houses.create_house(@valid_attrs)
-      assert house.code == "some code"
-      assert house.name == "some name"
-      assert house.passcode == 42
+      assert house.code == "a45bn0"
+      assert house.name == "My House"
+      assert house.passcode == "531361"
     end
 
     test "create_house/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Houses.create_house(@invalid_attrs)
     end
 
+    test "create_house/1 with invalid name returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Houses.create_house(@invalid_code)
+    end
+
+    test "create_house/1 with repeated passcode returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Houses.create_house(@invalid_passcode_repeated)
+    end
+
+    test "create_house/1 with sequential passcode returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Houses.create_house(@invalid_passcode_sequential)
+    end
+
     test "update_house/2 with valid data updates the house" do
       house = house_fixture()
       assert {:ok, %House{} = house} = Houses.update_house(house, @update_attrs)
-      assert house.code == "some updated code"
-      assert house.name == "some updated name"
-      assert house.passcode == 43
+      assert house.code == "bbbbbb"
+      assert house.name == "My Updated House"
+      assert house.passcode == "431555"
     end
 
     test "update_house/2 with invalid data returns error changeset" do
