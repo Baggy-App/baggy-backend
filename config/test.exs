@@ -6,8 +6,8 @@ use Mix.Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :baggy_backend, BaggyBackend.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: System.get_env("PSQL_USER"),
+  password: System.get_env("PSQL_PASSWORD"),
   database: "baggy_backend_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
