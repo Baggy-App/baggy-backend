@@ -5,8 +5,13 @@ defmodule BaggyBackendWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", BaggyBackendWeb do
+  scope "/", BaggyBackendWeb do
     pipe_through :api
+  end
+
+  scope "/api/v1", BaggyBackendWeb.Api.V1, as: :api_v1 do
+    pipe_through :api
+    resources "/houses", HouseController, except: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development
