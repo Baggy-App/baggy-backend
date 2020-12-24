@@ -3,17 +3,17 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
 
   alias BaggyBackend.Products
   alias BaggyBackend.Products.ProductList
+  alias BaggyBackend.Houses
 
-  @create_attrs %{
-    name: "some name"
-  }
+  @house_valid_attrs %{code: "a45bn0", name: "My House", passcode: "531361"}
   @update_attrs %{
     name: "some updated name"
   }
   @invalid_attrs %{name: nil}
 
   def fixture(:product_list) do
-    {:ok, product_list} = Products.create_product_list(@create_attrs)
+    {:ok, house} = Houses.create_house(@house_valid_attrs)
+    {:ok, product_list} = Products.create_product_list(%{name: "some name", house_id: house.id})
     product_list
   end
 
@@ -30,13 +30,14 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
 
   describe "create product_list" do
     test "renders product_list when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_product_list_path(conn, :create), product_list: @create_attrs)
+      {:ok, house} = Houses.create_house(@house_valid_attrs)
+      conn = post(conn, Routes.api_v1_product_list_path(conn, :create), product_list: %{name: "some name", house_id: house.id})
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.api_v1_product_list_path(conn, :show, id))
 
       assert %{
-               "id" => id,
+               "id" => _id,
                "name" => "some name"
              } = json_response(conn, 200)["data"]
     end
@@ -57,7 +58,7 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
       conn = get(conn, Routes.api_v1_product_list_path(conn, :show, id))
 
       assert %{
-               "id" => id,
+               "id" => _id,
                "name" => "some updated name"
              } = json_response(conn, 200)["data"]
     end

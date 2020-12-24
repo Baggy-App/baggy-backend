@@ -1,19 +1,25 @@
 defmodule BaggyBackend.ProductsTest do
   use BaggyBackend.DataCase
-
   alias BaggyBackend.Products
+  alias BaggyBackend.Houses
 
   describe "product_lists" do
     alias BaggyBackend.Products.ProductList
+    alias BaggyBackend.Houses.House
 
-    @valid_attrs %{name: "some name"}
+    @house_valid_attrs %{code: "a45bn0", name: "My House", passcode: "531361"}
     @update_attrs %{name: "some updated name"}
-    @invalid_attrs %{name: nil}
+    @invalid_attrs %{name: nil, house_id: -1}
 
     def product_list_fixture(attrs \\ %{}) do
+      {:ok, house} =
+        attrs
+        |> Enum.into(@house_valid_attrs)
+        |> Houses.create_house()
+
       {:ok, product_list} =
         attrs
-        |> Enum.into(@valid_attrs)
+        |> Enum.into(%{name: "default", house_id: house.id})
         |> Products.create_product_list()
 
       product_list
@@ -30,7 +36,8 @@ defmodule BaggyBackend.ProductsTest do
     end
 
     test "create_product_list/1 with valid data creates a product_list" do
-      assert {:ok, %ProductList{} = product_list} = Products.create_product_list(@valid_attrs)
+      {:ok, %House{} = house} = Houses.create_house(@house_valid_attrs)
+      assert {:ok, %ProductList{} = product_list} = Products.create_product_list(%{name: "some name", house_id: house.id})
       assert product_list.name == "some name"
     end
 

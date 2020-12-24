@@ -1,7 +1,9 @@
 defmodule BaggyBackend.Products.ProductList do
   use Ecto.Schema
   import Ecto.Changeset
-
+  @moduledoc """
+  The product_list schema.
+  """
   schema "product_lists" do
     field :name, :string
     belongs_to :house, BaggyBackend.Houses.House
