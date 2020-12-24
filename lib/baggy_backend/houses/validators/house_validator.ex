@@ -12,7 +12,7 @@ defmodule BaggyBackend.Houses.House.Validator do
       else
         [
           passcode: 
-          "Must contain numbers only and cannot be sequential or repetitive" <>
+          "Must contain six non sequential nor repetitive numbers" <>
             " (e.g. 456789 or 765432 are sequential and 333333 is repetitive)."
         ] 
       end
