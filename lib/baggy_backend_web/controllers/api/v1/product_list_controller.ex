@@ -1,4 +1,4 @@
-defmodule BaggyBackendWeb.ProductListController do
+defmodule BaggyBackendWeb.Api.V1.ProductListController do
   use BaggyBackendWeb, :controller
 
   alias BaggyBackend.Products
@@ -15,7 +15,7 @@ defmodule BaggyBackendWeb.ProductListController do
     with {:ok, %ProductList{} = product_list} <- Products.create_product_list(product_list_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", Routes.product_list_path(conn, :show, product_list))
+      |> put_resp_header("location", Routes.api_v1_product_list_path(conn, :show, product_list))
       |> render("show.json", product_list: product_list)
     end
   end

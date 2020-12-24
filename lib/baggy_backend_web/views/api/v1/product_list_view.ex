@@ -1,6 +1,6 @@
-defmodule BaggyBackendWeb.ProductListView do
+defmodule BaggyBackendWeb.Api.V1.ProductListView do
   use BaggyBackendWeb, :view
-  alias BaggyBackendWeb.ProductListView
+  alias BaggyBackendWeb.Api.V1.ProductListView
 
   def render("index.json", %{product_lists: product_lists}) do
     %{data: render_many(product_lists, ProductListView, "product_list.json")}

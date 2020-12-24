@@ -12,6 +12,7 @@ defmodule BaggyBackendWeb.Router do
   scope "/api/v1", BaggyBackendWeb.Api.V1, as: :api_v1 do
     pipe_through :api
     resources "/houses", HouseController, except: [:new, :edit]
+    resources "/product_lists", ProductListController, except: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development
