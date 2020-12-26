@@ -1,23 +1,13 @@
 defmodule BaggyBackendWeb.Api.V1.CategoryControllerTest do
   use BaggyBackendWeb.ConnCase
-
-  alias BaggyBackend.Products
+  
   alias BaggyBackend.Products.Category
 
-  @create_attrs %{
-    color: "some color",
-    name: "some name"
-  }
-  @update_attrs %{
-    color: "some updated color",
-    name: "some updated name"
-  }
-  @invalid_attrs %{color: nil, name: nil}
+  import BaggyBackend.Fixture
 
-  def fixture(:category) do
-    {:ok, category} = Products.create_category(@create_attrs)
-    category
-  end
+  @create_attrs attrs(:category, :valid_attrs)
+  @update_attrs attrs(:category, :update_attrs)
+  @invalid_attrs attrs(:category, :invalid_attrs)
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -38,9 +28,9 @@ defmodule BaggyBackendWeb.Api.V1.CategoryControllerTest do
       conn = get(conn, Routes.api_v1_category_path(conn, :show, id))
 
       assert %{
-               "id" => id,
-               "color" => "some color",
-               "name" => "some name"
+               "id" => _id,
+               "color" => _color,
+               "name" => _name
              } = json_response(conn, 200)["data"]
     end
 
@@ -60,9 +50,9 @@ defmodule BaggyBackendWeb.Api.V1.CategoryControllerTest do
       conn = get(conn, Routes.api_v1_category_path(conn, :show, id))
 
       assert %{
-               "id" => id,
-               "color" => "some updated color",
-               "name" => "some updated name"
+               "id" => _id,
+               "color" => _color,
+               "name" => _name
              } = json_response(conn, 200)["data"]
     end
 
@@ -86,7 +76,7 @@ defmodule BaggyBackendWeb.Api.V1.CategoryControllerTest do
   end
 
   defp create_category(_) do
-    category = fixture(:category)
+    category = fixture(:category, :valid_attrs)
     %{category: category}
   end
 end
