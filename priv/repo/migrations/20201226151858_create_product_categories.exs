@@ -9,6 +9,6 @@ defmodule BaggyBackend.Repo.Migrations.CreateProductCategories do
       timestamps()
     end
 
-    create index(:product_categories, [:name], unique: true)
+    create unique_index(:product_categories, [:name])
   end
 end

@@ -14,6 +14,7 @@ defmodule BaggyBackend.Products.Category do
     category
     |> cast(attrs, [:name, :color])
     |> validate_required([:name, :color])
-    |> unique_constraint([:name])
+    |> validate_format(:color, ~r/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)
+    |> unique_constraint(:name)
   end
 end
