@@ -1,4 +1,5 @@
 defmodule BaggyBackend.Fixture do
+  @moduledoc "Fixture Modelulo"
   import BaggyBackend.Fixture.House
   import BaggyBackend.Fixture.Category
 

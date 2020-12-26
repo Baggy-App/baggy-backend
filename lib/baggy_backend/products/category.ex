@@ -1,4 +1,6 @@
 defmodule BaggyBackend.Products.Category do
+  @moduledoc "Category Model"
+  
   use Ecto.Schema
   import Ecto.Changeset
 

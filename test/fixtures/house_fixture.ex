@@ -1,4 +1,5 @@
 defmodule BaggyBackend.Fixture.House do
+  @moduledoc "House Fixture"
   alias BaggyBackend.Houses
 
   @house_attrs %{

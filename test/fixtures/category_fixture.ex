@@ -1,4 +1,5 @@
 defmodule BaggyBackend.Fixture.Category do
+  @moduledoc "Category Fixture"
   alias BaggyBackend.Products
 
   @category_attrs %{
