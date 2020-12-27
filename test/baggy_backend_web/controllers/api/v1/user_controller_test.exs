@@ -1,21 +1,13 @@
 defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
   use BaggyBackendWeb.ConnCase
 
-  alias BaggyBackend.Accounts
   alias BaggyBackend.Accounts.User
 
-  @create_attrs %{
-    name: "some name",
-  }
-  @update_attrs %{
-    name: "some updated name",
-  }
-  @invalid_attrs %{name: nil}
+  import BaggyBackend.Fixture
 
-  def fixture(:user) do
-    {:ok, user} = Accounts.create_user(@create_attrs)
-    user
-  end
+  @create_attrs attrs(:user, :valid_attrs)
+  @update_attrs attrs(:user, :update_attrs)
+  @invalid_attrs attrs(:user, :invalid_attrs)
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -36,7 +28,7 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
       conn = get(conn, Routes.api_v1_user_path(conn, :show, uuid))
 
       assert %{
-               "name" => "some name",
+               "name" => "some name"
              } = json_response(conn, 200)["data"]
     end
 
@@ -56,7 +48,7 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
       conn = get(conn, Routes.api_v1_user_path(conn, :show, uuid))
 
       assert %{
-               "name" => "some updated name",
+               "name" => "some updated name"
              } = json_response(conn, 200)["data"]
     end
 
@@ -80,7 +72,7 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
   end
 
   defp create_user(_) do
-    user = fixture(:user)
+    user = fixture(:user, :valid_attrs)
     %{user: user}
   end
 end
