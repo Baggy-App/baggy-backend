@@ -13,6 +13,7 @@ defmodule BaggyBackendWeb.Router do
     pipe_through :api
     resources "/houses", HouseController, except: [:new, :edit]
     resources "/product_lists", ProductListController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit], param: "uuid"
   end
 
   # Enables LiveDashboard only for development
