@@ -14,6 +14,7 @@ defmodule BaggyBackendWeb.Router do
     resources "/houses", HouseController, except: [:new, :edit]
     resources "/product_lists", ProductListController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit], param: "uuid"
+    resources "/product_categories", CategoryController, except: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development
