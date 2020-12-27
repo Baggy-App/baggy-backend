@@ -64,7 +64,7 @@ defmodule BaggyBackend.HousesTest do
 
     test "update_house/2 with invalid data returns error changeset" do
       house = fixture(:house, :valid_attrs)
-      assert {:error, %Ecto.Changeset{}} = Houses.update_house(house, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Houses.update_house(house, attrs(:house, :invalid_attrs))
       assert house == Houses.get_house!(house.id)
     end
 

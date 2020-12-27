@@ -1,4 +1,5 @@
 defmodule BaggyBackend.Fixture.House do
+  @moduledoc "House Fixture"
   alias BaggyBackend.Houses
 
   @house_attrs %{
@@ -11,15 +12,15 @@ defmodule BaggyBackend.Fixture.House do
     invalid_passcode_non_numeric: %{code: "a45bn0", name: "I mean any name", passcode: "3a5678"}
   }
 
-  def schema_fixture(:house, attr_type, overwrite_attrs \\ %{}) do
-    attrs = schema_attrs(:house, attr_type)
+  def house_fixture(:house, attr_type, overwrite_attrs \\ %{}) do
+    attrs = house_attrs(:house, attr_type)
     
     {:ok, house} = Houses.create_house Map.merge(attrs, overwrite_attrs)
 
     house
   end
   
-  def schema_attrs(:house, attr_type) do 
+  def house_attrs(:house, attr_type) do 
     @house_attrs[attr_type] || raise_attr_type_error(attr_type)
   end
 
