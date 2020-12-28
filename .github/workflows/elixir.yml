@@ -54,7 +54,7 @@ jobs:
       uses: actions/setup-elixir@v1
       with:
         elixir-version: ${{ env.ELIXIR_VERSION }}
-        otp-version: ${{ env.OTP_VERSION }}]
+        otp-version: ${{ env.OTP_VERSION }}
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
