@@ -54,7 +54,7 @@ defmodule BaggyBackendWeb.Api.V1.HouseControllerTest do
 
       assert %{
                "id" => _id,
-               "code" => "bbbbbb",
+               "code" => "0nb54a",
                "name" => "My Updated House",
                "passcode" => "431555"
              } = json_response(conn, 200)["data"]

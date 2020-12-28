@@ -4,7 +4,7 @@ defmodule BaggyBackend.Fixture.House do
 
   @house_attrs %{
     valid_attrs: %{code: "a45bn0", name: "My House", passcode: "531361"},
-    update_attrs: %{code: "bbbbbb", name: "My Updated House", passcode: "431555"},
+    update_attrs: %{code: "0nb54a", name: "My Updated House", passcode: "431555"},
     invalid_attrs: %{code: nil, name: nil, passcode: nil},
     invalid_code: %{code: "123", name: "Any name really", passcode: "512433"},
     invalid_passcode_repeated: %{code: "a45bn0", name: "I mean any name", passcode: "444444"},
