@@ -1,0 +1,68 @@
+env:
+  ELIXIR_VERSION: '1.11.2'
+  OTP_VERSION: '22.3'
+  PSQL_USER: baggy_postgres
+  PSQL_PASSWORD: baggy_postgres
+  POSTGRES_DB: baggy_backend_test
+
+name: Elixir CI
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  linter:
+    name: Credo linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Elixir
+        uses: actions/setup-elixir@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}]
+      - name: Restore dependencies cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Check code
+        run: mix credo
+  
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+        - 5432:5432
+        env:
+          POSTGRES_USER: ${{ env.PSQL_USER }}
+          POSTGRES_PASSWORD: ${{ env.PSQL_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }} 
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: ${{ env.ELIXIR_VERSION }}
+        otp-version: ${{ env.OTP_VERSION }}]
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+    - name: Install dependencies
+      run: mix deps.get
+      
+    - name: Run tests
+      run: mix test
