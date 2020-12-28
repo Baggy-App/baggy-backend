@@ -1,7 +1,6 @@
 defmodule BaggyBackendWeb.Api.V1.HouseControllerTest do
   use BaggyBackendWeb.ConnCase
 
-  alias BaggyBackend.Houses
   alias BaggyBackend.Houses.House
 
   import BaggyBackend.Fixture

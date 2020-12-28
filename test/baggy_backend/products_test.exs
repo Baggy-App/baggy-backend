@@ -1,44 +1,33 @@
 defmodule BaggyBackend.ProductsTest do
   use BaggyBackend.DataCase
   alias BaggyBackend.Products
-  alias BaggyBackend.Houses
+
+  import BaggyBackend.Fixture
 
   describe "product_lists" do
     alias BaggyBackend.Products.ProductList
-    alias BaggyBackend.Houses.House
 
-    @house_valid_attrs %{code: "a45bn0", name: "My House", passcode: "531361"}
-    @update_attrs %{name: "some updated name"}
-    @invalid_attrs %{name: nil, house_id: -1}
-
-    def product_list_fixture(attrs \\ %{}) do
-      {:ok, house} =
-        attrs
-        |> Enum.into(@house_valid_attrs)
-        |> Houses.create_house()
-
-      {:ok, product_list} =
-        attrs
-        |> Enum.into(%{name: "default", house_id: house.id})
-        |> Products.create_product_list()
-
-      product_list
-    end
+    @valid_attrs attrs(:list, :valid_attrs)
+    @update_attrs attrs(:list, :update_attrs)
+    @invalid_attrs attrs(:list, :invalid_attrs)
 
     test "list_product_lists/0 returns all product_lists" do
-      product_list = product_list_fixture()
+      product_list = fixture(:list, :valid_attrs)
       assert Products.list_product_lists() == [product_list]
     end
 
     test "get_product_list!/1 returns the product_list with given id" do
-      product_list = product_list_fixture()
+      product_list = fixture(:list, :valid_attrs)
       assert Products.get_product_list!(product_list.id) == product_list
     end
 
     test "create_product_list/1 with valid data creates a product_list" do
-      {:ok, %House{} = house} = Houses.create_house(@house_valid_attrs)
-      assert {:ok, %ProductList{} = product_list} = Products.create_product_list(%{name: "some name", house_id: house.id})
-      assert product_list.name == "some name"
+      house = fixture(:house, :valid_attrs)
+      valid_attrs = Map.merge(@valid_attrs, %{house_id: house.id})
+
+      assert {:ok, %ProductList{} = product_list} = Products.create_product_list(valid_attrs)
+
+      assert product_list.name == "Churras"
     end
 
     test "create_product_list/1 with invalid data returns error changeset" do
@@ -46,25 +35,33 @@ defmodule BaggyBackend.ProductsTest do
     end
 
     test "update_product_list/2 with valid data updates the product_list" do
-      product_list = product_list_fixture()
-      assert {:ok, %ProductList{} = product_list} = Products.update_product_list(product_list, @update_attrs)
-      assert product_list.name == "some updated name"
+      product_list = fixture(:list, :valid_attrs)
+
+      update_attrs = Map.merge(@update_attrs, %{house_id: product_list.house_id})
+
+      assert {:ok, %ProductList{} = product_list} =
+               Products.update_product_list(product_list, update_attrs)
+
+      assert product_list.name == "Ceia de Natal"
     end
 
     test "update_product_list/2 with invalid data returns error changeset" do
-      product_list = product_list_fixture()
-      assert {:error, %Ecto.Changeset{}} = Products.update_product_list(product_list, @invalid_attrs)
+      product_list = fixture(:list, :valid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Products.update_product_list(product_list, @invalid_attrs)
+
       assert product_list == Products.get_product_list!(product_list.id)
     end
 
     test "delete_product_list/1 deletes the product_list" do
-      product_list = product_list_fixture()
+      product_list = fixture(:list, :valid_attrs)
       assert {:ok, %ProductList{}} = Products.delete_product_list(product_list)
       assert_raise Ecto.NoResultsError, fn -> Products.get_product_list!(product_list.id) end
     end
 
     test "change_product_list/1 returns a product_list changeset" do
-      product_list = product_list_fixture()
+      product_list = fixture(:list, :valid_attrs)
       assert %Ecto.Changeset{} = Products.change_product_list(product_list)
     end
   end
