@@ -6,8 +6,8 @@ defmodule BaggyBackendWeb.Api.V1.HouseController do
 
   action_fallback BaggyBackendWeb.FallbackController
 
-  def index(conn, _params) do
-    houses = Houses.list_houses()
+  def index(conn, %{"user_uuid" => user_uuid}) do
+    houses = Houses.list_houses(user_uuid)
     render(conn, "index.json", houses: houses)
   end
 
