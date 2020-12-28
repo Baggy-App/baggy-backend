@@ -1,9 +1,6 @@
 defmodule BaggyBackend.Fixture do
   @moduledoc "Fixture Modelulo"
-  import BaggyBackend.Fixture.House
-  import BaggyBackend.Fixture.Category
-  import BaggyBackend.Fixture.User
-  import BaggyBackend.Fixture.List
+  import BaggyBackend.Fixture.{House, Category, User, List}
 
   def fixture(schema_name, attr_type, overwrite_attrs \\ %{}) do
     case schema_name do
