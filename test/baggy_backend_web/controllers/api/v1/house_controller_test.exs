@@ -4,23 +4,21 @@ defmodule BaggyBackendWeb.Api.V1.HouseControllerTest do
   alias BaggyBackend.Houses
   alias BaggyBackend.Houses.House
 
-  @create_attrs %{code: "a45bn0", name: "My House", passcode: "531361"}
-  @update_attrs %{code: "bbbbbb", name: "My Updated House", passcode: "431555"}
-  @invalid_attrs %{code: "123", name: "Any non-nil name really", passcode: "456789"}
+  import BaggyBackend.Fixture
 
-  def fixture(:house) do
-    {:ok, house} = Houses.create_house(@create_attrs)
-    house
-  end
+  @create_attrs attrs(:house, :valid_attrs)
+  @update_attrs attrs(:house, :update_attrs)
+  @invalid_attrs attrs(:house, :invalid_attrs)
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "index" do
-    test "lists all houses", %{conn: conn} do
-      conn = get(conn, Routes.api_v1_house_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
+    test "lists all user's houses", %{conn: conn} do
+      user = fixture(:user, :valid_attrs)
+      conn = get(conn, Routes.api_v1_house_path(conn, :index), user_uuid: user.uuid)
+      assert json_response(conn, 200)["data"] == [user]
     end
   end
 
@@ -54,7 +52,7 @@ defmodule BaggyBackendWeb.Api.V1.HouseControllerTest do
 
       conn = get(conn, Routes.api_v1_house_path(conn, :show, id))
 
-  assert %{
+      assert %{
                "id" => _id,
                "code" => "bbbbbb",
                "name" => "My Updated House",
@@ -82,7 +80,7 @@ defmodule BaggyBackendWeb.Api.V1.HouseControllerTest do
   end
 
   defp create_house(_) do
-    house = fixture(:house)
+    house = fixture(:house, @create_attrs)
     %{house: house}
   end
 end

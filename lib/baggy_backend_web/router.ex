@@ -11,8 +11,14 @@ defmodule BaggyBackendWeb.Router do
 
   scope "/api/v1", BaggyBackendWeb.Api.V1, as: :api_v1 do
     pipe_through :api
-    resources "/houses", HouseController, except: [:new, :edit]
+
+    scope "/houses" do
+      get "/index/:user_uuid", HouseController, :index, as: :index
+    end
+
+    resources "/houses", HouseController, except: [:new, :edit, :index]
     resources "/product_lists", ProductListController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit], param: "uuid"
     resources "/product_categories", CategoryController, except: [:new, :edit]
   end
 

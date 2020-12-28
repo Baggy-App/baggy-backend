@@ -8,18 +8,10 @@ defmodule BaggyBackend.HousesTest do
   describe "houses" do
     alias BaggyBackend.Houses.House
 
-    def house_fixture(attrs \\ %{}) do
-      {:ok, house} =
-        attrs
-        |> Enum.into(attrs(:house, :valid_attrs))
-        |> Houses.create_house()
-
-      house
-    end
-
     test "list_houses/0 returns all houses" do
-      house = fixture(:house, :valid_attrs)
-      assert Houses.list_houses() == [house]
+      user = fixture(:user, :valid_attrs)
+      # house = fixture(:house, :valid_attrs)
+      assert Houses.list_houses(user.uuid) == [user]
     end
 
     test "get_house!/1 returns the house with given id" do
@@ -43,15 +35,18 @@ defmodule BaggyBackend.HousesTest do
     end
 
     test "create_house/1 with repeated passcode returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Houses.create_house(attrs(:house, :invalid_passcode_repeated))
+      assert {:error, %Ecto.Changeset{}} =
+               Houses.create_house(attrs(:house, :invalid_passcode_repeated))
     end
 
     test "create_house/1 with sequential passcode returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Houses.create_house(attrs(:house, :invalid_passcode_sequential))
+      assert {:error, %Ecto.Changeset{}} =
+               Houses.create_house(attrs(:house, :invalid_passcode_sequential))
     end
 
     test "create_house/1 with non numeric passcode returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Houses.create_house(attrs(:house, :invalid_passcode_non_numeric))
+      assert {:error, %Ecto.Changeset{}} =
+               Houses.create_house(attrs(:house, :invalid_passcode_non_numeric))
     end
 
     test "update_house/2 with valid data updates the house" do
@@ -64,7 +59,10 @@ defmodule BaggyBackend.HousesTest do
 
     test "update_house/2 with invalid data returns error changeset" do
       house = fixture(:house, :valid_attrs)
-      assert {:error, %Ecto.Changeset{}} = Houses.update_house(house, attrs(:house, :invalid_attrs))
+
+      assert {:error, %Ecto.Changeset{}} =
+               Houses.update_house(house, attrs(:house, :invalid_attrs))
+
       assert house == Houses.get_house!(house.id)
     end
 
