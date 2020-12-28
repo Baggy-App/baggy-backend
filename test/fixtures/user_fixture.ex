@@ -11,17 +11,17 @@ defmodule BaggyBackend.Fixture.User do
     invalid_attrs: %{name: nil}
   }
 
-  @spec user_fixture(:user, any, map) :: any
-  def user_fixture(:user, attr_type, overwrite_attrs \\ %{}) do
-    attrs = user_attrs(:user, attr_type)
+  @spec user_fixture(any, map) :: any
+  def user_fixture(attr_type, overwrite_attrs \\ %{}) do
+    attrs = user_attrs(attr_type)
 
     {:ok, user} = Accounts.create_user(Map.merge(attrs, overwrite_attrs))
 
     user
   end
 
-  @spec user_attrs(:user, any) :: any
-  def user_attrs(:user, attr_type) do
+  @spec user_attrs(any) :: any
+  def user_attrs(attr_type) do
     @user_attrs[attr_type] || raise_attr_type_error(attr_type)
   end
 
