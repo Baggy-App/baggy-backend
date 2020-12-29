@@ -31,7 +31,12 @@
           "apps/*/test/",
           "apps/*/web/"
         ],
-        excluded: [~r"/_build/", ~r"/deps/", ~r"/node_modules/", "lib/baggy_backend_web/telemetry.ex"]
+        excluded: [
+          ~r"/_build/",
+          ~r"/deps/",
+          ~r"/node_modules/",
+          "lib/baggy_backend_web/telemetry.ex"
+        ]
       },
       #
       # Load and configure plugins here:
@@ -87,7 +92,7 @@
         # If you don't want TODO comments to cause `mix credo` to fail, just
         # set this value to 0 (zero).
         #
-        {Credo.Check.Design.TagTODO, [exit_status: 2]},
+        {Credo.Check.Design.TagTODO, false},
         {Credo.Check.Design.TagFIXME, []},
 
         #

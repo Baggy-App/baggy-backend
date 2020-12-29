@@ -26,6 +26,11 @@ defmodule BaggyBackend.HousesTest do
       assert house.passcode == "531361"
     end
 
+    test "create_house/1 with repeated code" do
+      assert {:ok, %House{}} = Houses.create_house(attrs(:house, :valid_attrs))
+      assert {:error, %Ecto.Changeset{}} = Houses.create_house(attrs(:house, :valid_attrs))
+    end
+
     test "create_house/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Houses.create_house(attrs(:house, :invalid_attrs))
     end
@@ -52,7 +57,7 @@ defmodule BaggyBackend.HousesTest do
     test "update_house/2 with valid data updates the house" do
       house = fixture(:house, :valid_attrs)
       assert {:ok, %House{} = house} = Houses.update_house(house, attrs(:house, :update_attrs))
-      assert house.code == "bbbbbb"
+      assert house.code == "0nb54a"
       assert house.name == "My Updated House"
       assert house.passcode == "431555"
     end
