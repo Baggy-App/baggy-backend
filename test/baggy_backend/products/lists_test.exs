@@ -1,4 +1,4 @@
-defmodule BaggyBackend.ProductsTest do
+defmodule BaggyBackend.ProductsTest.List do
   use BaggyBackend.DataCase
   alias BaggyBackend.Products
 
