@@ -21,4 +21,12 @@ defmodule BaggyBackendWeb.FallbackController do
     |> put_view(BaggyBackendWeb.ErrorView)
     |> render(:"404")
   end
+
+  # This clause handle request with wrong arguments.
+  def call(conn, {:error, :bad_request, required_params}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(BaggyBackendWeb.ErrorView)
+    |> render(:"400")
+  end
 end
