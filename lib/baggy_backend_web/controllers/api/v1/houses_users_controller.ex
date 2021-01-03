@@ -9,13 +9,16 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
 
   # Verify password
   def create(conn, %{"houses_users" => houses_users_params}) do
-    with true <- validate_required_params(houses_users_params, ["house_id", "user_id", "passcode"]),
-    %House{} = house <- get_house(house_users_params["house_id"]),
-    true <- if House.validate_passcode(house, house_users_params["passcode"]), do: true, else: {:error, :bad_request}
-    {:ok, %HousesUsers{} = houses_users} <- Houses.create_houses_users(houses_users_params) do
+    with true <-
+           validate_required_params(houses_users_params, ["house_id", "user_uuid", "passcode"]),
+         %House{} <-
+           get_house_and_check_passcode(
+             houses_users_params["house_id"],
+             houses_users_params["passcode"]
+           ),
+         {:ok, %HousesUsers{} = houses_users} <- Houses.create_houses_users(houses_users_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", Routes.api_v1_houses_users_path(conn, :show, houses_users))
       |> render("show.json", houses_users: houses_users)
     end
   end
@@ -24,12 +27,14 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
   def toogle_is_owner(conn, %{"id" => id, "houses_users" => houses_users_params}) do
     houses_users = Houses.get_houses_users!(id)
 
-    with {:ok, %HousesUsers{} = houses_users} <- Houses.update_houses_users(houses_users, houses_users_params) do
+    with true <- validate_required_params(houses_users_params, ["is_owner"]),
+         {:ok, %HousesUsers{} = houses_users} <-
+           Houses.update_houses_users(houses_users, houses_users_params) do
       render(conn, "show.json", houses_users: houses_users)
     end
   end
 
-  # Only house oewner
+  # Only house owner
   def delete(conn, %{"id" => id}) do
     houses_users = Houses.get_houses_users!(id)
 
@@ -38,15 +43,23 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
     end
   end
 
-  def get_house(house_id)
+  defp get_house_and_check_passcode(house_id, passcode) do
     try do
-      Houses.get_house!(house_id)
+      house = Houses.get_house!(house_id)
+
+      if House.correct_passcode?(house, passcode),
+        do: house,
+        else: {:error, :unprocessable_entity, "Wrong passcode for house."}
     rescue
-      Ecto.NoResultsError -> {:error, :not_found}
+      Ecto.NoResultsError -> {:error, :not_found, "House not found."}
     end
   end
 
-  def validate_required_params(params, required_params) do
-    if required_params |> Enum.all?(&(Map.has_key?(params, &1))), do: true, else: {:error, :bad_request, required_params}
+  defp validate_required_params(params, required_params) do
+    if required_params |> Enum.all?(&Map.has_key?(params, &1)),
+      do: true,
+      else:
+        {:error, :unprocessable_entity,
+         "The required params are #{Enum.join(required_params, ", ")}."}
   end
 end
