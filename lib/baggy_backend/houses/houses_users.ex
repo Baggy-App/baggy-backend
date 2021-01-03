@@ -1,11 +1,18 @@
 defmodule BaggyBackend.Houses.HousesUsers do
+  @moduledoc """
+  HousesUsers association table schema.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "houses_users" do
     field :is_owner, :boolean, default: false
     belongs_to :house, BaggyBackend.Houses.House
-    belongs_to :user, BaggyBackend.Accounts.User
+
+    belongs_to :user, BaggyBackend.Accounts.User,
+      foreign_key: :user_uuid,
+      references: :uuid,
+      type: :binary_id
 
     timestamps()
   end

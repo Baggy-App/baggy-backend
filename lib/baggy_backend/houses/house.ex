@@ -24,9 +24,7 @@ defmodule BaggyBackend.Houses.House do
     |> unique_constraint(:code)
   end
 
-
-  def validate_passcode(house, passcode) do
+  def correct_passcode?(house, passcode) do
     house.passcode == passcode
   end
-
 end
