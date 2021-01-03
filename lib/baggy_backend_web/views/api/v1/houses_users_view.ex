@@ -11,7 +11,11 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersView do
   end
 
   def render("houses_users.json", %{houses_users: houses_users}) do
-    %{id: houses_users.id,
-      is_owner: houses_users.is_owner}
+    %{
+      id: houses_users.id,
+      is_owner: houses_users.is_owner,
+      house_id: houses_users.house_id,
+      user_uuid: houses_users.user_uuid
+    }
   end
 end

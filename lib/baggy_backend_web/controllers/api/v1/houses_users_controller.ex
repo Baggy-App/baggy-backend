@@ -24,12 +24,13 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
   end
 
   # Update only is_owner
-  def toogle_is_owner(conn, %{"id" => id, "houses_users" => houses_users_params}) do
+  def update(conn, %{"id" => id, "houses_users" => houses_users_params}) do
     houses_users = Houses.get_houses_users!(id)
 
     with true <- validate_required_params(houses_users_params, ["is_owner"]),
+         %{} <- update_params = Map.take(houses_users_params, ["is_owner"]),
          {:ok, %HousesUsers{} = houses_users} <-
-           Houses.update_houses_users(houses_users, houses_users_params) do
+           Houses.update_houses_users(houses_users, update_params) do
       render(conn, "show.json", houses_users: houses_users)
     end
   end

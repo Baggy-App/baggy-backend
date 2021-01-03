@@ -3,12 +3,9 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersControllerTest do
 
   import BaggyBackend.Fixture
 
-  @invalid_attrs %{is_owner: nil}
+  alias BaggyBackend.Houses.HousesUsers
 
-  # def fixture(:houses_users) do
-  #   {:ok, houses_users} = Houses.create_houses_users(@create_attrs)
-  #   houses_users
-  # end
+  @invalid_attrs %{is_owner: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -32,38 +29,33 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersControllerTest do
     end
   end
 
-  #
-  # describe "update houses_users" do
-  #   setup [:create_houses_users]
+  describe "update houses_users" do
+    setup [:create_houses_users]
 
-  #   test "renders houses_users when data is valid", %{
-  #     conn: conn,
-  #     houses_users: %HousesUsers{id: id} = houses_users
-  #   } do
-  #     conn =
-  #       put(conn, Routes.api_v1_houses_users_path(conn, :update, houses_users),
-  #         houses_users: @update_attrs
-  #       )
+    test "renders houses_users when data is valid", %{
+      conn: conn,
+      houses_users: houses_users
+    } do
+      %HousesUsers{id: id} = houses_users
+      update_attrs = %{is_owner: true}
 
-  #     assert %{"id" => ^id} = json_response(conn, 200)["data"]
+      conn =
+        put(conn, Routes.api_v1_houses_users_path(conn, :update, houses_users),
+          houses_users: update_attrs
+        )
 
-  #     conn = get(conn, Routes.api_v1_houses_users_path(conn, :show, id))
+      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+    end
 
-  #     assert %{
-  #              "id" => id,
-  #              "is_owner" => false
-  #            } = json_response(conn, 200)["data"]
-  #   end
+    test "renders errors when data is invalid", %{conn: conn, houses_users: houses_users} do
+      conn =
+        put(conn, Routes.api_v1_houses_users_path(conn, :update, houses_users),
+          houses_users: @invalid_attrs
+        )
 
-  #   test "renders errors when data is invalid", %{conn: conn, houses_users: houses_users} do
-  #     conn =
-  #       put(conn, Routes.api_v1_houses_users_path(conn, :update, houses_users),
-  #         houses_users: @invalid_attrs
-  #       )
-
-  #     assert json_response(conn, 422)["errors"] != %{}
-  #   end
-  # end
+      assert json_response(conn, 422)["errors"] != %{}
+    end
+  end
 
   describe "delete houses_users" do
     setup [:create_houses_users]
