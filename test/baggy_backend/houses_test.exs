@@ -106,6 +106,28 @@ defmodule BaggyBackend.HousesTest do
       assert houses_users.is_owner == true
     end
 
+    test "create_houses_users/1 with multiple users for the same house is successful" do
+      attrs = attrs(:houses_users, :valid_attrs)
+
+      assert {:ok, %HousesUsers{}} = Houses.create_houses_users(attrs)
+
+      new_user = fixture(:user, :valid_attrs)
+      attrs = %{attrs | user_uuid: new_user.uuid}
+
+      assert {:ok, %HousesUsers{}} = Houses.create_houses_users(attrs)
+    end
+
+    test "create_houses_users/1 with multiple houses for the same user is successful" do
+      attrs = attrs(:houses_users, :valid_attrs)
+
+      assert {:ok, %HousesUsers{}} = Houses.create_houses_users(attrs)
+
+      new_house = fixture(:house, :update_attrs)
+      attrs = %{attrs | house_id: new_house.id}
+
+      assert {:ok, %HousesUsers{}} = Houses.create_houses_users(attrs)
+    end
+
     test "create_houses_users/1 with repeated association returns error changeset" do
       houses_users_attrs = attrs(:houses_users, :valid_attrs)
 
