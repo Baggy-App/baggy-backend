@@ -100,17 +100,19 @@ defmodule BaggyBackend.HousesTest do
     end
 
     test "list_houses_users/0 returns all houses_users" do
-      houses_users = houses_users_fixture()
+      houses_users = fixture(:houses_users, :valid_attrs)
       assert Houses.list_houses_users() == [houses_users]
     end
 
     test "get_houses_users!/1 returns the houses_users with given id" do
-      houses_users = houses_users_fixture()
+      houses_users = fixture(:houses_users, :valid_attrs)
       assert Houses.get_houses_users!(houses_users.id) == houses_users
     end
 
     test "create_houses_users/1 with valid data creates a houses_users" do
-      assert {:ok, %HousesUsers{} = houses_users} = Houses.create_houses_users(@valid_attrs)
+      assert {:ok, %HousesUsers{} = houses_users} =
+               Houses.create_houses_users(attrs(:houses_users, :valid_attrs))
+
       assert houses_users.is_owner == true
     end
 
@@ -119,25 +121,31 @@ defmodule BaggyBackend.HousesTest do
     end
 
     test "update_houses_users/2 with valid data updates the houses_users" do
-      houses_users = houses_users_fixture()
-      assert {:ok, %HousesUsers{} = houses_users} = Houses.update_houses_users(houses_users, @update_attrs)
+      houses_users = fixture(:houses_users, :valid_attrs)
+
+      assert {:ok, %HousesUsers{} = houses_users} =
+               Houses.update_houses_users(houses_users, @update_attrs)
+
       assert houses_users.is_owner == false
     end
 
     test "update_houses_users/2 with invalid data returns error changeset" do
-      houses_users = houses_users_fixture()
-      assert {:error, %Ecto.Changeset{}} = Houses.update_houses_users(houses_users, @invalid_attrs)
+      houses_users = fixture(:houses_users, :valid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Houses.update_houses_users(houses_users, @invalid_attrs)
+
       assert houses_users == Houses.get_houses_users!(houses_users.id)
     end
 
     test "delete_houses_users/1 deletes the houses_users" do
-      houses_users = houses_users_fixture()
+      houses_users = fixture(:houses_users, :valid_attrs)
       assert {:ok, %HousesUsers{}} = Houses.delete_houses_users(houses_users)
       assert_raise Ecto.NoResultsError, fn -> Houses.get_houses_users!(houses_users.id) end
     end
 
     test "change_houses_users/1 returns a houses_users changeset" do
-      houses_users = houses_users_fixture()
+      houses_users = fixture(:houses_users, :valid_attrs)
       assert %Ecto.Changeset{} = Houses.change_houses_users(houses_users)
     end
   end
