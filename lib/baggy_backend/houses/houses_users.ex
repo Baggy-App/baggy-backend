@@ -24,5 +24,7 @@ defmodule BaggyBackend.Houses.HousesUsers do
     |> validate_required([:is_owner, :house_id, :user_uuid])
     |> foreign_key_constraint(:house_id)
     |> foreign_key_constraint(:user_uuid)
+    # This unique constrains guarantees uniqueness of house_id and user_uuid combination
+    |> unique_constraint(:house_id, name: :index_user_on_house_in_houses_users)
   end
 end

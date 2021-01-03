@@ -86,18 +86,8 @@ defmodule BaggyBackend.HousesTest do
   describe "houses_users" do
     alias BaggyBackend.Houses.HousesUsers
 
-    @valid_attrs %{is_owner: true}
     @update_attrs %{is_owner: false}
     @invalid_attrs %{is_owner: nil}
-
-    def houses_users_fixture(attrs \\ %{}) do
-      {:ok, houses_users} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Houses.create_houses_users()
-
-      houses_users
-    end
 
     test "list_houses_users/0 returns all houses_users" do
       houses_users = fixture(:houses_users, :valid_attrs)
@@ -114,6 +104,14 @@ defmodule BaggyBackend.HousesTest do
                Houses.create_houses_users(attrs(:houses_users, :valid_attrs))
 
       assert houses_users.is_owner == true
+    end
+
+    test "create_houses_users/1 with repeated association returns error changeset" do
+      houses_users_attrs = attrs(:houses_users, :valid_attrs)
+
+      assert {:ok, %HousesUsers{}} = Houses.create_houses_users(houses_users_attrs)
+
+      assert {:error, %Ecto.Changeset{}} = Houses.create_houses_users(houses_users_attrs)
     end
 
     test "create_houses_users/1 with invalid data returns error changeset" do
