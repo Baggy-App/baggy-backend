@@ -2,15 +2,15 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
   use BaggyBackendWeb, :controller
 
   alias BaggyBackend.Houses
-  alias BaggyBackend.Houses.House
-  alias BaggyBackend.Houses.HousesUsers
+  alias BaggyBackend.Houses.{House, HousesUsers}
+  alias BaggyBackendWeb.ParamsHandler, as: Params
 
   action_fallback BaggyBackendWeb.FallbackController
 
   # Verify password
   def create(conn, %{"houses_users" => houses_users_params}) do
-    with true <-
-           validate_required_params(houses_users_params, ["house_id", "user_uuid", "passcode"]),
+    with %{} <-
+           Params.filter_params(houses_users_params, ["house_id", "user_uuid", "passcode"]),
          %House{} <-
            get_house_and_check_passcode(
              houses_users_params["house_id"],
@@ -27,7 +27,7 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
   def update(conn, %{"id" => id, "houses_users" => houses_users_params}) do
     houses_users = Houses.get_houses_users!(id)
 
-    with true <- validate_required_params(houses_users_params, ["is_owner"]),
+    with %{} <- Params.filter_params(houses_users_params, ["is_owner"]),
          %{} <- update_params = Map.take(houses_users_params, ["is_owner"]),
          {:ok, %HousesUsers{} = houses_users} <-
            Houses.update_houses_users(houses_users, update_params) do
@@ -54,13 +54,5 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
     rescue
       Ecto.NoResultsError -> {:error, :not_found, "House not found."}
     end
-  end
-
-  defp validate_required_params(params, required_params) do
-    if required_params |> Enum.all?(&Map.has_key?(params, &1)),
-      do: true,
-      else:
-        {:error, :unprocessable_entity,
-         "The required params are #{Enum.join(required_params, ", ")}."}
   end
 end
