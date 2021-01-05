@@ -25,6 +25,10 @@ defmodule BaggyBackend.Houses.House do
   end
 
   def correct_passcode?(house, passcode) do
-    house.passcode == passcode
+    if house, do: house.passcode == passcode, else: raise(ArgumentError, "Empty house.")
+  end
+
+  def is_owner?(_house, _user) do
+    true
   end
 end

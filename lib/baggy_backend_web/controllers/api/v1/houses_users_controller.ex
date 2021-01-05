@@ -12,11 +12,14 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
     with %{} <-
            Params.filter_params(houses_users_params, ["house_id", "user_uuid", "passcode"]),
          %House{} <-
-           get_house_and_check_passcode(
+           get_house_and_check_permission(
              houses_users_params["house_id"],
-             houses_users_params["passcode"]
+             houses_users_params["passcode"],
+             # current_user
+             nil
            ),
-         {:ok, %HousesUsers{} = houses_users} <- Houses.create_houses_users(houses_users_params) do
+         {:ok, %HousesUsers{} = houses_users} <-
+           Houses.create_houses_users(houses_users_params) do
       conn
       |> put_status(:created)
       |> render("show.json", houses_users: houses_users)
@@ -27,8 +30,14 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
   def update(conn, %{"id" => id, "houses_users" => houses_users_params}) do
     houses_users = Houses.get_houses_users!(id)
 
-    with %{} <- Params.filter_params(houses_users_params, ["is_owner"]),
-         %{} <- update_params = Map.take(houses_users_params, ["is_owner"]),
+    with %{} <- update_params = Params.filter_params(houses_users_params, ["is_owner"]),
+         %House{} <-
+           get_house_and_check_permission(
+             houses_users.house_id,
+             houses_users_params["passcode"],
+             # current_user
+             nil
+           ),
          {:ok, %HousesUsers{} = houses_users} <-
            Houses.update_houses_users(houses_users, update_params) do
       render(conn, "show.json", houses_users: houses_users)
@@ -36,21 +45,31 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
   end
 
   # Only house owner
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id, "houses_users" => houses_users_params}) do
     houses_users = Houses.get_houses_users!(id)
 
-    with {:ok, %HousesUsers{}} <- Houses.delete_houses_users(houses_users) do
+    with true <- Params.validate_required_params(houses_users_params, ["house_id", "passcode"]),
+         %House{} <-
+           get_house_and_check_permission(
+             houses_users.house_id,
+             houses_users_params["passcode"],
+             # current_user
+             nil
+           ),
+         {:ok, %HousesUsers{}} <- Houses.delete_houses_users(houses_users) do
       send_resp(conn, :no_content, "")
     end
   end
 
-  defp get_house_and_check_passcode(house_id, passcode) do
+  defp get_house_and_check_permission(house_id, passcode, _user) do
     try do
       house = Houses.get_house!(house_id)
 
-      if House.correct_passcode?(house, passcode),
+      if House.correct_passcode?(house, passcode) && House.is_owner?(house, nil),
         do: house,
-        else: {:error, :unprocessable_entity, "Wrong passcode for house."}
+        else:
+          {:error, :unprocessable_entity,
+           "Wrong passcode for house or user insufficient permissions."}
     rescue
       Ecto.NoResultsError -> {:error, :not_found, "House not found."}
     end
