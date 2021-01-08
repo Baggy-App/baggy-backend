@@ -43,8 +43,8 @@ defmodule BaggyBackend.ProductsTest do
       assert {:ok, %Product{} = product} = Products.update_product(product, update_attrs)
       assert product.description == "Marca X"
       assert product.done == false
-      assert product.max_price == 12
-      assert product.min_price == 7
+      assert product.max_price == 1200
+      assert product.min_price == 700
       assert product.name == "Caixa de ovos"
       assert product.quantity == 2
     end
@@ -54,6 +54,16 @@ defmodule BaggyBackend.ProductsTest do
 
       assert {:error, %Ecto.Changeset{}} =
                Products.update_product(product, attrs(:product, :invalid_attrs))
+
+      assert product == Products.get_product!(product.id)
+    end
+
+    test "update_product/2 with invalid price limits returns error changeset" do
+      product = fixture(:product, :valid_attrs)
+
+      attrs = %{min_price: 500, max_price: 200}
+
+      assert {:error, %Ecto.Changeset{}} = Products.update_product(product, attrs)
 
       assert product == Products.get_product!(product.id)
     end
