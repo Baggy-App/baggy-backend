@@ -3,49 +3,44 @@ defmodule BaggyBackend.ProductsTest do
 
   alias BaggyBackend.Products
 
+  import BaggyBackend.Fixture
+
   describe "products" do
     alias BaggyBackend.Products.Product
 
-    @valid_attrs %{description: "some description", done: true, max_price: 42, min_price: 42, name: "some name", quantity: 42}
-    @update_attrs %{description: "some updated description", done: false, max_price: 43, min_price: 43, name: "some updated name", quantity: 43}
-    @invalid_attrs %{description: nil, done: nil, max_price: nil, min_price: nil, name: nil, quantity: nil}
-
-    def product_fixture(attrs \\ %{}) do
-      {:ok, product} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Products.create_product()
-
-      product
-    end
-
     test "list_products/0 returns all products" do
-      product = product_fixture()
+      product = fixture(:product, :valid_attrs)
       assert Products.list_products() == [product]
     end
 
     test "get_product!/1 returns the product with given id" do
-      product = product_fixture()
+      product = fixture(:product, :valid_attrs)
       assert Products.get_product!(product.id) == product
     end
 
     test "create_product/1 with valid data creates a product" do
-      assert {:ok, %Product{} = product} = Products.create_product(@valid_attrs)
-      assert product.description == "some description"
-      assert product.done == true
-      assert product.max_price == 42
-      assert product.min_price == 42
-      assert product.name == "some name"
-      assert product.quantity == 42
+      assocs = %{
+        product_list_id: fixture(:list, :valid_attrs).id,
+        product_category_id: fixture(:category, :valid_attrs).id
+      }
+
+      valid_attrs = Map.merge(attrs(:product, :valid_attrs), assocs)
+
+      assert {:ok, %Product{} = product} = Products.create_product(valid_attrs)
+      assert product.name == "Leite 2l"
+      assert product.quantity == 4
+      assert product.done == false
     end
 
     test "create_product/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Products.create_product(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} =
+               Products.create_product(attrs(:product, :invalid_attrs))
     end
 
     test "update_product/2 with valid data updates the product" do
-      product = product_fixture()
-      assert {:ok, %Product{} = product} = Products.update_product(product, @update_attrs)
+      product = fixture(:product, :valid_attrs)
+      update_attrs = attrs(:product, :update_attrs)
+      assert {:ok, %Product{} = product} = Products.update_product(product, update_attrs)
       assert product.description == "some updated description"
       assert product.done == false
       assert product.max_price == 43
@@ -55,19 +50,22 @@ defmodule BaggyBackend.ProductsTest do
     end
 
     test "update_product/2 with invalid data returns error changeset" do
-      product = product_fixture()
-      assert {:error, %Ecto.Changeset{}} = Products.update_product(product, @invalid_attrs)
+      product = fixture(:product, :valid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Products.update_product(product, attrs(:product, :invalid_attrs))
+
       assert product == Products.get_product!(product.id)
     end
 
     test "delete_product/1 deletes the product" do
-      product = product_fixture()
+      product = fixture(:product, :valid_attrs)
       assert {:ok, %Product{}} = Products.delete_product(product)
       assert_raise Ecto.NoResultsError, fn -> Products.get_product!(product.id) end
     end
 
     test "change_product/1 returns a product changeset" do
-      product = product_fixture()
+      product = fixture(:product, :valid_attrs)
       assert %Ecto.Changeset{} = Products.change_product(product)
     end
   end
