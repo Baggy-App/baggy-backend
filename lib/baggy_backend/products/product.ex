@@ -14,9 +14,9 @@ defmodule BaggyBackend.Products.Product do
     field :name, :string
     field :quantity, :integer
 
-    belongs_to :product_list_id, BaggyBackend.Products.ProductList
+    belongs_to :product_list, BaggyBackend.Products.ProductList
 
-    belongs_to :product_category_id, BaggyBackend.Products.Category
+    belongs_to :product_category, BaggyBackend.Products.Category
 
     belongs_to :user, BaggyBackend.Accounts.User,
       foreign_key: :user_uuid,
@@ -41,6 +41,7 @@ defmodule BaggyBackend.Products.Product do
       :user_uuid
     ])
     |> validate_required([:name, :quantity, :done, :product_list_id, :product_category_id])
+    |> validate_length(:name, min: 1)
     |> foreign_key_constraint(:product_list_id)
     |> foreign_key_constraint(:product_category_id)
   end
