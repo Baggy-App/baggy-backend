@@ -21,4 +21,19 @@ defmodule BaggyBackendWeb.FallbackController do
     |> put_view(BaggyBackendWeb.ErrorView)
     |> render(:"404")
   end
+
+  def call(conn, {:error, :not_found, error_message}) do
+    conn
+    |> put_status(:not_found)
+    |> put_view(BaggyBackendWeb.ErrorView)
+    |> render(:"404", error_message)
+  end
+
+  # This clause handle request with wrong arguments.
+  def call(conn, {:error, :unprocessable_entity, error_message}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(BaggyBackendWeb.ErrorView)
+    |> render(:"422", error: error_message)
+  end
 end
