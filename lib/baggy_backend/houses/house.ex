@@ -23,4 +23,12 @@ defmodule BaggyBackend.Houses.House do
     |> Validator.validate_passcode()
     |> unique_constraint(:code)
   end
+
+  def correct_passcode?(house, passcode) do
+    if house, do: house.passcode == passcode, else: raise(ArgumentError, "Empty house.")
+  end
+
+  def is_owner?(_house, _user) do
+    true
+  end
 end
