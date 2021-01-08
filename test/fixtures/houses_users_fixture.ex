@@ -12,17 +12,19 @@ defmodule BaggyBackend.Fixture.HousesUsers do
   def houses_users_fixture(attr_type, overwrite_attrs \\ %{}) do
     attrs = houses_users_attrs(attr_type)
 
-    {:ok, houses_users} = Houses.create_houses_users(Map.merge(attrs, overwrite_attrs))
+    %{id: house_id, passcode: house_passcode} = House.house_fixture(:valid_attrs)
+    %{uuid: user_uuid} = User.user_fixture(:valid_attrs)
+
+    assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user_uuid}
+
+    {:ok, houses_users} =
+      Houses.create_houses_users(attrs |> Map.merge(overwrite_attrs) |> Map.merge(assocs))
 
     houses_users
   end
 
   def houses_users_attrs(attr_type) do
-    attrs = @houses_users_attrs[attr_type] || raise_attr_type_error(attr_type)
-    %{id: house_id, passcode: house_passcode} = House.house_fixture(:valid_attrs)
-    %{uuid: user_uuid} = User.user_fixture(:valid_attrs)
-    assoc_attrs = %{house_id: house_id, passcode: house_passcode, user_uuid: user_uuid}
-    Map.merge(attrs, assoc_attrs)
+    @houses_users_attrs[attr_type] || raise_attr_type_error(attr_type)
   end
 
   defp raise_attr_type_error(attr_type) do

@@ -100,14 +100,25 @@ defmodule BaggyBackend.HousesTest do
     end
 
     test "create_houses_users/1 with valid data creates a houses_users" do
-      assert {:ok, %HousesUsers{} = houses_users} =
-               Houses.create_houses_users(attrs(:houses_users, :valid_attrs))
+      %{id: house_id, passcode: house_passcode} = fixture(:house, :valid_attrs)
+      %{uuid: user_uuid} = fixture(:user, :valid_attrs)
+
+      assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user_uuid}
+
+      create_attrs = Map.merge(attrs(:houses_users, :valid_attrs), assocs)
+
+      assert {:ok, %HousesUsers{} = houses_users} = Houses.create_houses_users(create_attrs)
 
       assert houses_users.is_owner == true
     end
 
     test "create_houses_users/1 with multiple users for the same house is successful" do
-      attrs = attrs(:houses_users, :valid_attrs)
+      %{id: house_id, passcode: house_passcode} = fixture(:house, :valid_attrs)
+      %{uuid: user_uuid} = fixture(:user, :valid_attrs)
+
+      assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user_uuid}
+
+      attrs = Map.merge(attrs(:houses_users, :valid_attrs), assocs)
 
       assert {:ok, %HousesUsers{}} = Houses.create_houses_users(attrs)
 
@@ -118,7 +129,12 @@ defmodule BaggyBackend.HousesTest do
     end
 
     test "create_houses_users/1 with multiple houses for the same user is successful" do
-      attrs = attrs(:houses_users, :valid_attrs)
+      %{id: house_id, passcode: house_passcode} = fixture(:house, :valid_attrs)
+      %{uuid: user_uuid} = fixture(:user, :valid_attrs)
+
+      assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user_uuid}
+
+      attrs = Map.merge(attrs(:houses_users, :valid_attrs), assocs)
 
       assert {:ok, %HousesUsers{}} = Houses.create_houses_users(attrs)
 
@@ -129,11 +145,16 @@ defmodule BaggyBackend.HousesTest do
     end
 
     test "create_houses_users/1 with repeated association returns error changeset" do
-      houses_users_attrs = attrs(:houses_users, :valid_attrs)
+      %{id: house_id, passcode: house_passcode} = fixture(:house, :valid_attrs)
+      %{uuid: user_uuid} = fixture(:user, :valid_attrs)
 
-      assert {:ok, %HousesUsers{}} = Houses.create_houses_users(houses_users_attrs)
+      assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user_uuid}
 
-      assert {:error, %Ecto.Changeset{}} = Houses.create_houses_users(houses_users_attrs)
+      create_attrs = Map.merge(attrs(:houses_users, :valid_attrs), assocs)
+
+      assert {:ok, %HousesUsers{}} = Houses.create_houses_users(create_attrs)
+
+      assert {:error, %Ecto.Changeset{}} = Houses.create_houses_users(create_attrs)
     end
 
     test "create_houses_users/1 with invalid data returns error changeset" do
