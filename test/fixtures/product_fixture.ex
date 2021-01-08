@@ -7,12 +7,12 @@ defmodule BaggyBackend.Fixture.Product do
   @product_attrs %{
     valid_attrs: %{name: "Leite 2l", quantity: 4, done: false},
     update_attrs: %{
-      description: "some updated description",
+      name: "Caixa de ovos",
+      quantity: 2,
       done: false,
-      max_price: 43,
-      min_price: 43,
-      name: "some updated name",
-      quantity: 43
+      description: "Marca X",
+      min_price: 7,
+      max_price: 12
     },
     invalid_attrs: %{name: "", quantity: 4, done: false}
   }

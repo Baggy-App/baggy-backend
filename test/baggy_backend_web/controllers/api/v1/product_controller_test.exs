@@ -1,37 +1,12 @@
 defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
   use BaggyBackendWeb.ConnCase
 
-  alias BaggyBackend.Products
   alias BaggyBackend.Products.Product
 
-  @create_attrs %{
-    description: "some description",
-    done: true,
-    max_price: 42,
-    min_price: 42,
-    name: "some name",
-    quantity: 42
-  }
-  @update_attrs %{
-    description: "some updated description",
-    done: false,
-    max_price: 43,
-    min_price: 43,
-    name: "some updated name",
-    quantity: 43
-  }
-  @invalid_attrs %{
-    description: nil,
-    done: nil,
-    max_price: nil,
-    min_price: nil,
-    name: nil,
-    quantity: nil
-  }
+  import BaggyBackend.Fixture
 
   def fixture(:product) do
-    {:ok, product} = Products.create_product(@create_attrs)
-    product
+    fixture(:product, :valid_attrs)
   end
 
   setup %{conn: conn} do
@@ -47,24 +22,36 @@ defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
 
   describe "create product" do
     test "renders product when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_product_path(conn, :create), product: @create_attrs)
+      assocs = %{
+        product_list_id: fixture(:list, :valid_attrs).id,
+        product_category_id: fixture(:category, :valid_attrs).id
+      }
+
+      create_attrs = Map.merge(attrs(:product, :valid_attrs), assocs)
+
+      conn = post(conn, Routes.api_v1_product_path(conn, :create), product: create_attrs)
+
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.api_v1_product_path(conn, :show, id))
 
       assert %{
                "id" => _id,
-               "description" => "some description",
-               "done" => true,
-               "max_price" => 42,
-               "min_price" => 42,
-               "name" => "some name",
-               "quantity" => 42
+               "description" => nil,
+               "done" => false,
+               "max_price" => nil,
+               "min_price" => nil,
+               "name" => "Leite 2l",
+               "quantity" => 4
              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_product_path(conn, :create), product: @invalid_attrs)
+      conn =
+        post(conn, Routes.api_v1_product_path(conn, :create),
+          product: attrs(:product, :invalid_attrs)
+        )
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -73,25 +60,31 @@ defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
     setup [:create_product]
 
     test "renders product when data is valid", %{conn: conn, product: %Product{id: id} = product} do
-      conn = put(conn, Routes.api_v1_product_path(conn, :update, product), product: @update_attrs)
+      conn =
+        put(conn, Routes.api_v1_product_path(conn, :update, product),
+          product: attrs(:product, :update_attrs)
+        )
+
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.api_v1_product_path(conn, :show, id))
 
       assert %{
                "id" => _id,
-               "description" => "some updated description",
+               "description" => "Marca X",
                "done" => false,
-               "max_price" => 43,
-               "min_price" => 43,
-               "name" => "some updated name",
-               "quantity" => 43
+               "max_price" => 12,
+               "min_price" => 7,
+               "name" => "Caixa de ovos",
+               "quantity" => 2
              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, product: product} do
       conn =
-        put(conn, Routes.api_v1_product_path(conn, :update, product), product: @invalid_attrs)
+        put(conn, Routes.api_v1_product_path(conn, :update, product),
+          product: attrs(:product, :invalid_attrs)
+        )
 
       assert json_response(conn, 422)["errors"] != %{}
     end

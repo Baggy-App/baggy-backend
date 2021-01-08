@@ -41,12 +41,12 @@ defmodule BaggyBackend.ProductsTest do
       product = fixture(:product, :valid_attrs)
       update_attrs = attrs(:product, :update_attrs)
       assert {:ok, %Product{} = product} = Products.update_product(product, update_attrs)
-      assert product.description == "some updated description"
+      assert product.description == "Marca X"
       assert product.done == false
-      assert product.max_price == 43
-      assert product.min_price == 43
-      assert product.name == "some updated name"
-      assert product.quantity == 43
+      assert product.max_price == 12
+      assert product.min_price == 7
+      assert product.name == "Caixa de ovos"
+      assert product.quantity == 2
     end
 
     test "update_product/2 with invalid data returns error changeset" do
