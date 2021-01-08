@@ -73,8 +73,8 @@ defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
                "id" => _id,
                "description" => "Marca X",
                "done" => false,
-               "max_price" => 12,
-               "min_price" => 7,
+               "max_price" => 12.0,
+               "min_price" => 7.0,
                "name" => "Caixa de ovos",
                "quantity" => 2
              } = json_response(conn, 200)["data"]

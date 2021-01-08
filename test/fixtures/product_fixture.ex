@@ -11,8 +11,8 @@ defmodule BaggyBackend.Fixture.Product do
       quantity: 2,
       done: false,
       description: "Marca X",
-      min_price: 7,
-      max_price: 12
+      min_price: 700,
+      max_price: 1200
     },
     invalid_attrs: %{name: "", quantity: 4, done: false}
   }

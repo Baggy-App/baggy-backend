@@ -11,12 +11,15 @@ defmodule BaggyBackendWeb.Api.V1.ProductView do
   end
 
   def render("product.json", %{product: product}) do
-    %{id: product.id,
+    %{
+      id: product.id,
       name: product.name,
       description: product.description,
       quantity: product.quantity,
-      min_price: product.min_price,
-      max_price: product.max_price,
-      done: product.done}
+      # Dividing returns float
+      min_price: if(product.min_price, do: product.min_price / 100),
+      max_price: if(product.max_price, do: product.max_price / 100),
+      done: product.done
+    }
   end
 end
