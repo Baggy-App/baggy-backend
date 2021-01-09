@@ -38,6 +38,7 @@ defmodule BaggyBackend.Houses do
 
   """
   def get_house!(id), do: Repo.get!(House, id)
+  def get_house!(id, assoc) when is_atom(assoc), do: Repo.get!(House, id) |> Repo.preload(assoc)
 
   @doc """
   Creates a house.
