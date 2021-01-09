@@ -17,6 +17,7 @@ defmodule BaggyBackendWeb.Router do
     resources "/product_lists", ProductListController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit], param: "uuid"
     resources "/product_categories", CategoryController, except: [:new, :edit]
+    resources "/products", ProductController, except: [:new, :edit]
     resources "/houses_users", HousesUsersController, only: [:create, :delete, :update]
   end
 

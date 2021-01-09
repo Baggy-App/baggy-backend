@@ -8,7 +8,7 @@ defmodule BaggyBackend.Fixture.Category do
     invalid_attrs: %{name: nil, color: nil}
   }
 
-  def category_fixture(attr_type, overwrite_attrs) do
+  def category_fixture(attr_type, overwrite_attrs \\ %{}) do
     attrs = category_attrs(attr_type)
 
     {:ok, house} = Products.create_category(Map.merge(attrs, overwrite_attrs))

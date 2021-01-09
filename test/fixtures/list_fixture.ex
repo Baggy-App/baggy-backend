@@ -10,7 +10,7 @@ defmodule BaggyBackend.Fixture.List do
     invalid_attrs: %{name: nil}
   }
 
-  def list_fixture(attr_type, overwrite_attrs) do
+  def list_fixture(attr_type, overwrite_attrs \\ %{}) do
     %{id: house_id} = House.house_fixture(:valid_attrs, %{code: "prdctlt"})
     attrs = Map.merge(list_attrs(attr_type), %{house_id: house_id})
 
