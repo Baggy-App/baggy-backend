@@ -1,4 +1,7 @@
 defmodule BaggyBackendWeb.HouseChannel do
+  @moduledoc """
+  Channel for house-related connections
+  """
   use BaggyBackendWeb, :channel
 
   alias BaggyBackend.{Houses, Products, Products.ProductList}
