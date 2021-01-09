@@ -2,7 +2,7 @@ defmodule BaggyBackend.Fixture.Product do
   @moduledoc "Product Fixture"
   alias BaggyBackend.Products
 
-  alias BaggyBackend.Fixture.{List, Category}
+  alias BaggyBackend.Fixture.{ProductList, ProductCategory}
 
   @product_attrs %{
     valid_attrs: %{name: "Leite 2l", quantity: 4, done: false},
@@ -21,8 +21,8 @@ defmodule BaggyBackend.Fixture.Product do
     attrs = product_attrs(attr_type)
 
     assocs = %{
-      product_list_id: List.list_fixture(:valid_attrs).id,
-      product_category_id: Category.category_fixture(:valid_attrs).id
+      product_list_id: ProductList.product_list_fixture(:valid_attrs).id,
+      product_category_id: ProductCategory.product_category_fixture(:valid_attrs).id
     }
 
     {:ok, house} =
