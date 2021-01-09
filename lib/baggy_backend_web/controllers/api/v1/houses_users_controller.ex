@@ -9,7 +9,7 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
 
   # Verify password
   def create(conn, %{"houses_users" => houses_users_params}) do
-    with %{} <-
+    with %{} = houses_users_params <-
            Params.filter_params(houses_users_params, ["house_id", "user_uuid", "passcode"]),
          %House{} <-
            get_house_and_check_permission(

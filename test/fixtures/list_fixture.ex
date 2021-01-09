@@ -11,7 +11,10 @@ defmodule BaggyBackend.Fixture.List do
   }
 
   def list_fixture(attr_type, overwrite_attrs \\ %{}) do
-    %{id: house_id} = House.house_fixture(:valid_attrs, %{code: "prdctlt"})
+    random_code = :crypto.strong_rand_bytes(6) |> Base.url_encode64() |> binary_part(0, 6)
+
+    %{id: house_id} = House.house_fixture(:valid_attrs, %{code: random_code})
+
     attrs = Map.merge(list_attrs(attr_type), %{house_id: house_id})
 
     {:ok, house} = Products.create_product_list(Map.merge(attrs, overwrite_attrs))
