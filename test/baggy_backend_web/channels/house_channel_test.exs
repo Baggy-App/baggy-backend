@@ -22,7 +22,7 @@ defmodule BaggyBackendWeb.HouseChannelTest do
 
       lists =
         Enum.map(0..5, fn i ->
-          fixture(:list, :valid_attrs, %{name: "List#{to_string(i)}", house_id: house.id})
+          fixture(:product_list, :valid_attrs, %{name: "List#{to_string(i)}", house_id: house.id})
         end)
 
       {:ok, response, _} =
@@ -47,7 +47,7 @@ defmodule BaggyBackendWeb.HouseChannelTest do
     end
 
     test "broadcasts updated list when params are valid", %{socket: socket, house: house} do
-      product_list = fixture(:list, :valid_attrs, %{name: "Old name", house_id: house.id})
+      product_list = fixture(:product_list, :valid_attrs, %{name: "Old name", house_id: house.id})
 
       push(socket, "product_list:update", %{
         "id" => product_list.id,
@@ -58,7 +58,7 @@ defmodule BaggyBackendWeb.HouseChannelTest do
     end
 
     test "replies with error changeset when params are invalid", %{socket: socket, house: house} do
-      product_list = fixture(:list, :valid_attrs, %{name: "Old name", house_id: house.id})
+      product_list = fixture(:product_list, :valid_attrs, %{name: "Old name", house_id: house.id})
 
       ref =
         push(socket, "product_list:update", %{

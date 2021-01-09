@@ -20,8 +20,8 @@ defmodule BaggyBackend.ProductsTest do
 
     test "create_product/1 with valid data creates a product" do
       assocs = %{
-        product_list_id: fixture(:list, :valid_attrs).id,
-        product_category_id: fixture(:category, :valid_attrs).id
+        product_list_id: fixture(:product_list, :valid_attrs).id,
+        product_category_id: fixture(:product_category, :valid_attrs).id
       }
 
       valid_attrs = Map.merge(attrs(:product, :valid_attrs), assocs)

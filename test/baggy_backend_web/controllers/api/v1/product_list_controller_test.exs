@@ -5,9 +5,9 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
 
   import BaggyBackend.Fixture
 
-  @create_attrs attrs(:list, :valid_attrs)
-  @update_attrs attrs(:list, :update_attrs)
-  @invalid_attrs attrs(:list, :invalid_attrs)
+  @create_attrs attrs(:product_list, :valid_attrs)
+  @update_attrs attrs(:product_list, :update_attrs)
+  @invalid_attrs attrs(:product_list, :invalid_attrs)
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -93,6 +93,6 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
   end
 
   defp create_product_list(_) do
-    %{product_list: fixture(:list, :valid_attrs)}
+    %{product_list: fixture(:product_list, :valid_attrs)}
   end
 end

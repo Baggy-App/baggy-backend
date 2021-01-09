@@ -1,13 +1,13 @@
 defmodule BaggyBackendWeb.Api.V1.CategoryControllerTest do
   use BaggyBackendWeb.ConnCase
-  
+
   alias BaggyBackend.Products.Category
 
   import BaggyBackend.Fixture
 
-  @create_attrs attrs(:category, :valid_attrs)
-  @update_attrs attrs(:category, :update_attrs)
-  @invalid_attrs attrs(:category, :invalid_attrs)
+  @create_attrs attrs(:product_category, :valid_attrs)
+  @update_attrs attrs(:product_category, :update_attrs)
+  @invalid_attrs attrs(:product_category, :invalid_attrs)
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -43,8 +43,13 @@ defmodule BaggyBackendWeb.Api.V1.CategoryControllerTest do
   describe "update category" do
     setup [:create_category]
 
-    test "renders category when data is valid", %{conn: conn, category: %Category{id: id} = category} do
-      conn = put(conn, Routes.api_v1_category_path(conn, :update, category), category: @update_attrs)
+    test "renders category when data is valid", %{
+      conn: conn,
+      category: %Category{id: id} = category
+    } do
+      conn =
+        put(conn, Routes.api_v1_category_path(conn, :update, category), category: @update_attrs)
+
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.api_v1_category_path(conn, :show, id))
@@ -57,7 +62,9 @@ defmodule BaggyBackendWeb.Api.V1.CategoryControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, category: category} do
-      conn = put(conn, Routes.api_v1_category_path(conn, :update, category), category: @invalid_attrs)
+      conn =
+        put(conn, Routes.api_v1_category_path(conn, :update, category), category: @invalid_attrs)
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -76,7 +83,7 @@ defmodule BaggyBackendWeb.Api.V1.CategoryControllerTest do
   end
 
   defp create_category(_) do
-    category = fixture(:category, :valid_attrs)
+    category = fixture(:product_category, :valid_attrs)
     %{category: category}
   end
 end
