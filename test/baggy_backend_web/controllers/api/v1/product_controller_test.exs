@@ -23,8 +23,8 @@ defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
   describe "create product" do
     test "renders product when data is valid", %{conn: conn} do
       assocs = %{
-        product_list_id: fixture(:list, :valid_attrs).id,
-        product_category_id: fixture(:category, :valid_attrs).id
+        product_list_id: fixture(:product_list, :valid_attrs).id,
+        product_category_id: fixture(:product_category, :valid_attrs).id
       }
 
       create_attrs = Map.merge(attrs(:product, :valid_attrs), assocs)
