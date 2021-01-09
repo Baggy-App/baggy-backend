@@ -18,6 +18,6 @@ defmodule BaggyBackendWeb.ParamsHandler do
       do: true,
       else:
         {:error, :unprocessable_entity,
-         "The required params are #{Enum.join(required_params, ", ")}."}
+         "The required params are '#{Enum.join(required_params, "', '")}'."}
   end
 end
