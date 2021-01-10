@@ -20,8 +20,8 @@ defmodule BaggyBackend.HousesTest do
     end
 
     test "get_house!/2 returns the house with given id with preloaded lists" do
-      house = fixture(:house, :valid_attrs) |> Repo.preload(:lists)
-      assert Houses.get_house!(house.id, :lists) == house
+      house = fixture(:house, :valid_attrs) |> Repo.preload(:product_lists)
+      assert Houses.get_house!(house.id, :product_lists) == house
     end
 
     test "create_house/1 with valid data creates a house" do
