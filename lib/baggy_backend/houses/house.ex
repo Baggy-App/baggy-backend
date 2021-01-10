@@ -11,7 +11,7 @@ defmodule BaggyBackend.Houses.House do
     field :name, :string
     field :passcode, :string
 
-    has_many :lists, Products.ProductList
+    has_many :product_lists, Products.ProductList
 
     timestamps()
   end
