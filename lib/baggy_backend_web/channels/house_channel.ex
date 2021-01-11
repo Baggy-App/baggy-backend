@@ -52,7 +52,7 @@ defmodule BaggyBackendWeb.HouseChannel do
 
     case Products.create_product_list(params) do
       {:ok, product_list} ->
-        broadcast(socket, "product_list:created", %{product_list: product_list})
+        broadcast(socket, "product_list:create", %{product_list: product_list})
         {:noreply, socket}
 
       {:error, changeset} ->
@@ -68,6 +68,19 @@ defmodule BaggyBackendWeb.HouseChannel do
          {:ok, %ProductList{} = product_list} <-
            Products.update_product_list(product_list, params) do
       broadcast(socket, "product_list:update", %{product_list: product_list})
+      {:noreply, socket}
+    else
+      {:error, %Ecto.Changeset{} = changeset} -> {:reply, {:error, changeset.errors}, socket}
+      {:error, error} -> {:reply, {:error, error}, socket}
+    end
+  end
+
+  @impl true
+  def handle_in("product_list:delete", %{"id" => id}, socket) do
+    with {:ok, %ProductList{} = product_list} <- get_product_list(id),
+         {:ok, %ProductList{}} <-
+           Products.delete_product_list(product_list) do
+      broadcast(socket, "product_list:delete", %{product_list_id: id})
       {:noreply, socket}
     else
       {:error, %Ecto.Changeset{} = changeset} -> {:reply, {:error, changeset.errors}, socket}
