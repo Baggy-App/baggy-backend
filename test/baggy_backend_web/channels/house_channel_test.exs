@@ -124,7 +124,7 @@ defmodule BaggyBackendWeb.HouseChannelTest do
         "product_list" => product_list_attrs
       })
 
-      assert_broadcast "product_list:created", %{
+      assert_broadcast "product_list:create", %{
         product_list: %ProductList{name: "Churras", house_id: _house_id}
       }
     end
@@ -141,6 +141,49 @@ defmodule BaggyBackendWeb.HouseChannelTest do
         {:name, {"can't be blank", [validation: :required]}},
         {:house_id, {"can't be blank", [validation: :required]}}
       ]
+    end
+  end
+
+  describe "handle_in product_list:delete" do
+    setup do
+      house = fixture(:house, :valid_attrs)
+      product_list = fixture(:product_list, :valid_attrs, %{house_id: house.id})
+
+      {:ok, _, socket} =
+        BaggyBackendWeb.UserSocket
+        |> socket("user_id", %{some: :assign})
+        |> subscribe_and_join(BaggyBackendWeb.HouseChannel, "house:#{to_string(house.id)}")
+
+      %{socket: socket, product_list_id: product_list.id}
+    end
+
+    test "broadcasts deleted product list when id is valid", %{
+      socket: socket,
+      product_list_id: product_list_id
+    } do
+      push(socket, "product_list:delete", %{
+        "id" => product_list_id
+      })
+
+      assert_broadcast "product_list:delete", %{
+        product_list_id: _product_list_id
+      }
+    end
+
+    test "replies with an error message when id is invalid", %{
+      socket: socket,
+      product_list_id: product_list_id
+    } do
+      invalid_id = product_list_id + 1
+
+      ref =
+        push(socket, "product_list:delete", %{
+          "id" => invalid_id
+        })
+
+      _message = "Record with id #{invalid_id} has not been found"
+
+      assert_reply ref, :error, _message
     end
   end
 
