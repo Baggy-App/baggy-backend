@@ -2,7 +2,6 @@ defmodule BaggyBackend.Fixture.ProductList do
   @moduledoc "List Fixture"
 
   alias BaggyBackend.Products
-  alias BaggyBackend.Fixture.House
 
   @product_list_attrs %{
     valid_attrs: %{name: "Churras"},
@@ -11,12 +10,9 @@ defmodule BaggyBackend.Fixture.ProductList do
   }
 
   def product_list_fixture(attr_type, overwrite_attrs \\ %{}) do
-    random_code = :crypto.strong_rand_bytes(6) |> Base.url_encode64() |> binary_part(0, 6)
+    attrs = product_list_attrs(attr_type) |> Map.merge(overwrite_attrs)
 
-    %{id: house_id} = House.house_fixture(:valid_attrs, %{code: random_code})
-    attrs = Map.merge(product_list_attrs(attr_type), %{house_id: house_id})
-
-    {:ok, house} = Products.create_product_list(Map.merge(attrs, overwrite_attrs))
+    {:ok, house} = Products.create_product_list(attrs)
 
     house
   end

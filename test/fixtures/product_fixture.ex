@@ -20,13 +20,7 @@ defmodule BaggyBackend.Fixture.Product do
   def product_fixture(attr_type, overwrite_attrs \\ %{}) do
     attrs = product_attrs(attr_type)
 
-    assocs = %{
-      product_list_id: ProductList.product_list_fixture(:valid_attrs).id,
-      product_category_id: ProductCategory.product_category_fixture(:valid_attrs).id
-    }
-
-    {:ok, house} =
-      Products.create_product(attrs |> Map.merge(overwrite_attrs) |> Map.merge(assocs))
+    {:ok, house} = Products.create_product(attrs |> Map.merge(overwrite_attrs))
 
     house
   end
