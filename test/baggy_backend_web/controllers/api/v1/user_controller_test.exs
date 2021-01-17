@@ -15,10 +15,17 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
 
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_user_path(conn, :create), user: @create_attrs)
-      assert %{"uuid" => uuid} = json_response(conn, 201)["data"]
+      # Creates users
+      conn2 = post(conn, Routes.api_v1_user_path(conn, :create), user: @create_attrs)
+      assert %{"uuid" => uuid} = json_response(conn2, 201)["data"]
 
-      conn = get(conn, Routes.api_v1_user_path(conn, :show, uuid))
+      # Verify users creation
+      {:ok, token, _claims} = BaggyBackend.Guardian.encode_and_sign(%{:id => uuid})
+      conn = conn
+      |> put_req_header("content-type", "application/json")
+      |> put_req_header("authorization", "Bearer #{token}")
+
+      conn = get(conn, Routes.api_v1_user_path(conn, :show))
       assert %{
                "name" => "some name"
              } = json_response(conn, 200)["data"]
@@ -40,19 +47,28 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
   describe "update user" do
     setup [:create_user]
 
-    test "renders user when data is valid", %{conn: conn, user: %User{uuid: uuid} = user} do
-      conn = put(conn, Routes.api_v1_user_path(conn, :update, user), user: @update_attrs)
+    test "renders user when data is valid", %{conn: conn, user: %User{uuid: uuid}, token: token} do
+      conn = conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("authorization", "Bearer #{token}")
+
+      conn = put(conn, Routes.api_v1_user_path(conn, :update), user: @update_attrs)
+
       assert %{"uuid" => ^uuid} = json_response(conn, 200)["data"]
 
-      conn = get(conn, Routes.api_v1_user_path(conn, :show, uuid))
+      conn = get(conn, Routes.api_v1_user_path(conn, :show))
 
       assert %{
                "name" => "some updated name"
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, Routes.api_v1_user_path(conn, :update, user), user: @invalid_attrs)
+    test "renders errors when data is invalid", %{conn: conn, token: token} do
+      conn = conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("authorization", "Bearer #{token}")
+
+      conn = put(conn, Routes.api_v1_user_path(conn, :update), user: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -60,18 +76,24 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
   describe "delete user" do
     setup [:create_user]
 
-    test "deletes chosen user", %{conn: conn, user: user} do
-      conn = delete(conn, Routes.api_v1_user_path(conn, :delete, user))
+    test "deletes chosen user", %{conn: conn, token: token} do
+      conn = conn
+          |> put_req_header("content-type", "application/json")
+          |> put_req_header("authorization", "Bearer #{token}")
+
+      conn = delete(conn, Routes.api_v1_user_path(conn, :delete))
+
       assert response(conn, 204)
 
       assert_error_sent 404, fn ->
-        get(conn, Routes.api_v1_user_path(conn, :show, user))
+        get(conn, Routes.api_v1_user_path(conn, :show))
       end
     end
   end
 
   defp create_user(_) do
     user = fixture(:user, :valid_attrs)
-    %{user: user}
+    {:ok, token, _claims} = BaggyBackend.Guardian.encode_and_sign(%{:id => user.uuid})
+    %{user: user, token: token}
   end
 end
