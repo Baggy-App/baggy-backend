@@ -7,11 +7,12 @@ defmodule BaggyBackendWeb.Api.V1.UserController do
   action_fallback BaggyBackendWeb.FallbackController
 
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
+    with {:ok, %User{} = user} <- Accounts.create_user(user_params),
+         {:ok, token, _claims} <- BaggyBackend.Guardian.encode_and_sign(%{:id => user.uuid}) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.api_v1_user_path(conn, :show, user))
-      |> render("show.json", user: user)
+      |> render("create.json", user: user, token: token)
     end
   end
 

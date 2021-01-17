@@ -19,10 +19,16 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
       assert %{"uuid" => uuid} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.api_v1_user_path(conn, :show, uuid))
-
       assert %{
                "name" => "some name"
              } = json_response(conn, 200)["data"]
+    end
+
+    test "returns user token" , %{conn: conn} do
+      conn = post(conn, Routes.api_v1_user_path(conn, :create), user: @create_attrs)
+      assert %{"uuid" => uuid, "token" => token} = json_response(conn, 201)["data"]
+      assert {:ok, claims} = BaggyBackend.Guardian.decode_and_verify(token)
+      assert uuid == claims["sub"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
