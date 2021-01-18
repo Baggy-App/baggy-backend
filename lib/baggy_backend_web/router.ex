@@ -5,6 +5,10 @@ defmodule BaggyBackendWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :jwt_authenticated do
+    plug BaggyBackend.Guardian.AuthPipeline
+  end
+
   scope "/", BaggyBackendWeb do
     pipe_through :api
   end
@@ -15,11 +19,24 @@ defmodule BaggyBackendWeb.Router do
     resources "/houses", HouseController, except: [:new, :edit, :index]
     resources "/houses/index/:uuid", HouseController, only: [:index]
     resources "/product_lists", ProductListController, except: [:new, :edit]
-    resources "/users", UserController, except: [:new, :edit], param: "uuid"
+    resources "/users", UserController, only: [:create]
     resources "/product_categories", CategoryController, except: [:new, :edit]
     resources "/products", ProductController, except: [:new, :edit]
     resources "/houses_users", HousesUsersController, only: [:create, :delete, :update]
   end
+
+
+  scope "/api/v1", BaggyBackendWeb.Api.V1, as: :api_v1 do
+    pipe_through [:api, :jwt_authenticated]
+
+    scope "/users" do
+      get "/me", UserController, :show
+      put "/me", UserController, :update
+      delete "/me", UserController, :delete
+    end
+  end
+
+
 
   # Enables LiveDashboard only for development
   #

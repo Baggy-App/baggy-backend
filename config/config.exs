@@ -29,3 +29,9 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+
+# Guardian config
+config :baggy_backend, BaggyBackend.Guardian,
+       issuer: "baggy_backend",
+       secret_key: "9vqLQxw3PPalVYDPGPrbeHx/cCEQYa3DFB6zeooHUYqgS1A5sgZ7RwetfKtwM8Rk"
