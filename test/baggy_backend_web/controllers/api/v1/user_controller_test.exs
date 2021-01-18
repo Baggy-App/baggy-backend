@@ -13,6 +13,8 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
+  # TODO: centralize connection generation
+
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       # Creates users
@@ -21,17 +23,20 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
 
       # Verify users creation
       {:ok, token, _claims} = BaggyBackend.Guardian.encode_and_sign(%{:id => uuid})
-      conn = conn
-      |> put_req_header("content-type", "application/json")
-      |> put_req_header("authorization", "Bearer #{token}")
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("authorization", "Bearer #{token}")
 
       conn = get(conn, Routes.api_v1_user_path(conn, :show))
+
       assert %{
                "name" => "some name"
              } = json_response(conn, 200)["data"]
     end
 
-    test "returns user token" , %{conn: conn} do
+    test "returns user token", %{conn: conn} do
       conn = post(conn, Routes.api_v1_user_path(conn, :create), user: @create_attrs)
       assert %{"uuid" => uuid, "token" => token} = json_response(conn, 201)["data"]
       assert {:ok, claims} = BaggyBackend.Guardian.decode_and_verify(token)
@@ -48,7 +53,8 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
     setup [:create_user]
 
     test "renders user when data is valid", %{conn: conn, user: %User{uuid: uuid}, token: token} do
-      conn = conn
+      conn =
+        conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("authorization", "Bearer #{token}")
 
@@ -64,7 +70,8 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, token: token} do
-      conn = conn
+      conn =
+        conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("authorization", "Bearer #{token}")
 
@@ -77,9 +84,10 @@ defmodule BaggyBackendWeb.Api.V1.UserControllerTest do
     setup [:create_user]
 
     test "deletes chosen user", %{conn: conn, token: token} do
-      conn = conn
-          |> put_req_header("content-type", "application/json")
-          |> put_req_header("authorization", "Bearer #{token}")
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("authorization", "Bearer #{token}")
 
       conn = delete(conn, Routes.api_v1_user_path(conn, :delete))
 
