@@ -2,7 +2,7 @@ defmodule BaggyBackendWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", BaggyBackendWeb.RoomChannel
+  channel "house:*", BaggyBackendWeb.HouseChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

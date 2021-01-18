@@ -4,12 +4,14 @@ defmodule BaggyBackend.Houses.House do
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias BaggyBackend.Houses.House.Validator
+  alias BaggyBackend.{Houses.House.Validator, Products}
 
   schema "houses" do
     field :code, :string
     field :name, :string
     field :passcode, :string
+
+    has_many :product_lists, Products.ProductList
 
     timestamps()
   end

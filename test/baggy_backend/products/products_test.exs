@@ -8,23 +8,39 @@ defmodule BaggyBackend.ProductsTest do
   describe "products" do
     alias BaggyBackend.Products.Product
 
-    test "list_products/0 returns all products" do
-      product = fixture(:product, :valid_attrs)
+    setup do
+      house = fixture(:house, :valid_attrs, %{code: "housetst"})
+      product_list = fixture(:product_list, :valid_attrs, %{house_id: house.id})
+      product_category = fixture(:product_category, :valid_attrs)
+      user = fixture(:user, :valid_attrs)
+
+      fixture(:houses_users, :valid_attrs, %{
+        house_id: house.id,
+        user_uuid: user.uuid,
+        is_owner: true
+      })
+
+      %{
+        assocs: %{
+          product_list_id: product_list.id,
+          product_category_id: product_category.id,
+          user_uuid: user.uuid
+        }
+      }
+    end
+
+    test "list_products/0 returns all products", %{assocs: assocs} do
+      product = fixture(:product, :valid_attrs, assocs)
       assert Products.list_products() == [product]
     end
 
-    test "get_product!/1 returns the product with given id" do
-      product = fixture(:product, :valid_attrs)
+    test "get_product!/1 returns the product with given id", %{assocs: assocs} do
+      product = fixture(:product, :valid_attrs, assocs)
       assert Products.get_product!(product.id) == product
     end
 
-    test "create_product/1 with valid data creates a product" do
-      assocs = %{
-        product_list_id: fixture(:product_list, :valid_attrs).id,
-        product_category_id: fixture(:product_category, :valid_attrs).id
-      }
-
-      valid_attrs = Map.merge(attrs(:product, :valid_attrs), assocs)
+    test "create_product/1 with valid data creates a product", %{assocs: assocs} do
+      valid_attrs = attrs(:product, :valid_attrs) |> Map.merge(assocs)
 
       assert {:ok, %Product{} = product} = Products.create_product(valid_attrs)
       assert product.name == "Leite 2l"
@@ -37,8 +53,8 @@ defmodule BaggyBackend.ProductsTest do
                Products.create_product(attrs(:product, :invalid_attrs))
     end
 
-    test "update_product/2 with valid data updates the product" do
-      product = fixture(:product, :valid_attrs)
+    test "update_product/2 with valid data updates the product", %{assocs: assocs} do
+      product = fixture(:product, :valid_attrs, assocs)
       update_attrs = attrs(:product, :update_attrs)
       assert {:ok, %Product{} = product} = Products.update_product(product, update_attrs)
       assert product.description == "Marca X"
@@ -49,8 +65,8 @@ defmodule BaggyBackend.ProductsTest do
       assert product.quantity == 2
     end
 
-    test "update_product/2 with invalid data returns error changeset" do
-      product = fixture(:product, :valid_attrs)
+    test "update_product/2 with invalid data returns error changeset", %{assocs: assocs} do
+      product = fixture(:product, :valid_attrs, assocs)
 
       assert {:error, %Ecto.Changeset{}} =
                Products.update_product(product, attrs(:product, :invalid_attrs))
@@ -58,8 +74,8 @@ defmodule BaggyBackend.ProductsTest do
       assert product == Products.get_product!(product.id)
     end
 
-    test "update_product/2 with invalid price limits returns error changeset" do
-      product = fixture(:product, :valid_attrs)
+    test "update_product/2 with invalid price limits returns error changeset", %{assocs: assocs} do
+      product = fixture(:product, :valid_attrs, assocs)
 
       attrs = %{min_price: 500, max_price: 200}
 
@@ -68,14 +84,14 @@ defmodule BaggyBackend.ProductsTest do
       assert product == Products.get_product!(product.id)
     end
 
-    test "delete_product/1 deletes the product" do
-      product = fixture(:product, :valid_attrs)
+    test "delete_product/1 deletes the product", %{assocs: assocs} do
+      product = fixture(:product, :valid_attrs, assocs)
       assert {:ok, %Product{}} = Products.delete_product(product)
       assert_raise Ecto.NoResultsError, fn -> Products.get_product!(product.id) end
     end
 
-    test "change_product/1 returns a product changeset" do
-      product = fixture(:product, :valid_attrs)
+    test "change_product/1 returns a product changeset", %{assocs: assocs} do
+      product = fixture(:product, :valid_attrs, assocs)
       assert %Ecto.Changeset{} = Products.change_product(product)
     end
   end

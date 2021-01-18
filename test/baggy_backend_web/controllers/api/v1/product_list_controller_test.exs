@@ -93,6 +93,7 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
   end
 
   defp create_product_list(_) do
-    %{product_list: fixture(:product_list, :valid_attrs)}
+    house = fixture(:house, :valid_attrs)
+    %{product_list: fixture(:product_list, :valid_attrs, %{house_id: house.id})}
   end
 end

@@ -42,7 +42,12 @@ defmodule BaggyBackend.Products.Product do
       :product_category_id,
       :user_uuid
     ])
-    |> validate_required([:name, :quantity, :done, :product_list_id, :product_category_id])
+    |> validate_required([
+      :name,
+      :product_list_id,
+      :product_category_id,
+      :user_uuid
+    ])
     |> validate_length(:name, min: 1)
     |> Validator.validate_price_limits()
     |> foreign_key_constraint(:product_list_id)

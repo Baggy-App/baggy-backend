@@ -23,11 +23,13 @@ defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
   describe "create product" do
     test "renders product when data is valid", %{conn: conn} do
       assocs = %{
-        product_list_id: fixture(:product_list, :valid_attrs).id,
-        product_category_id: fixture(:product_category, :valid_attrs).id
+        product_list_id:
+          fixture(:product_list, :valid_attrs, %{house_id: fixture(:house, :valid_attrs).id}).id,
+        product_category_id: fixture(:product_category, :valid_attrs).id,
+        user_uuid: fixture(:user, :valid_attrs).uuid
       }
 
-      create_attrs = Map.merge(attrs(:product, :valid_attrs), assocs)
+      create_attrs = attrs(:product, :valid_attrs) |> Map.merge(assocs)
 
       conn = post(conn, Routes.api_v1_product_path(conn, :create), product: create_attrs)
 
@@ -104,7 +106,18 @@ defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
   end
 
   defp create_product(_) do
-    product = fixture(:product)
+    house = fixture(:house, :valid_attrs)
+    product_list = fixture(:product_list, :valid_attrs, %{house_id: house.id})
+    product_category = fixture(:product_category, :valid_attrs)
+    user = fixture(:user, :valid_attrs)
+
+    assocs = %{
+      product_list_id: product_list.id,
+      product_category_id: product_category.id,
+      user_uuid: user.uuid
+    }
+
+    product = fixture(:product, :valid_attrs, assocs)
     %{product: product}
   end
 end

@@ -1,7 +1,7 @@
 defmodule BaggyBackend.HousesTest do
   use BaggyBackend.DataCase
 
-  alias BaggyBackend.Houses
+  alias BaggyBackend.{Houses, Repo}
 
   import BaggyBackend.Fixture
 
@@ -17,6 +17,11 @@ defmodule BaggyBackend.HousesTest do
     test "get_house!/1 returns the house with given id" do
       house = fixture(:house, :valid_attrs)
       assert Houses.get_house!(house.id) == house
+    end
+
+    test "get_house!/2 returns the house with given id with preloaded lists" do
+      house = fixture(:house, :valid_attrs) |> Repo.preload(:product_lists)
+      assert Houses.get_house!(house.id, :product_lists) == house
     end
 
     test "create_house/1 with valid data creates a house" do
