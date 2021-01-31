@@ -7,7 +7,6 @@ defmodule BaggyBackend.Houses do
   alias BaggyBackend.Repo
 
   alias BaggyBackend.Houses.House
-  alias BaggyBackend.Accounts.User
 
   @doc """
   Returns the list of houses.
@@ -18,9 +17,13 @@ defmodule BaggyBackend.Houses do
       [%House{}, ...]
 
   """
-  def list_houses(user_uuid) do
-    # TODO: Get all user's houses from association table when its created
-    [Repo.get!(User, user_uuid)]
+  def list_houses(user) do
+    BaggyBackend.Repo.all(
+      from house in BaggyBackend.Houses.House,
+        join: hu in BaggyBackend.Houses.HousesUsers,
+        on: hu.user_uuid == ^user.uuid,
+        distinct: true
+    )
   end
 
   @doc """
