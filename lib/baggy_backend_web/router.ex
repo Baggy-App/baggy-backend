@@ -16,15 +16,11 @@ defmodule BaggyBackendWeb.Router do
   scope "/api/v1", BaggyBackendWeb.Api.V1, as: :api_v1 do
     pipe_through :api
 
-    resources "/houses", HouseController, except: [:new, :edit, :index]
-    resources "/houses/index/:uuid", HouseController, only: [:index]
     resources "/product_lists", ProductListController, except: [:new, :edit]
     resources "/users", UserController, only: [:create]
     resources "/product_categories", CategoryController, except: [:new, :edit]
     resources "/products", ProductController, except: [:new, :edit]
-    resources "/houses_users", HousesUsersController, only: [:create, :delete, :update]
   end
-
 
   scope "/api/v1", BaggyBackendWeb.Api.V1, as: :api_v1 do
     pipe_through [:api, :jwt_authenticated]
@@ -34,9 +30,10 @@ defmodule BaggyBackendWeb.Router do
       put "/me", UserController, :update
       delete "/me", UserController, :delete
     end
+
+    resources "/houses", HouseController, except: [:new, :edit]
+    resources "/houses_users", HousesUsersController, only: [:create, :update, :delete]
   end
-
-
 
   # Enables LiveDashboard only for development
   #
