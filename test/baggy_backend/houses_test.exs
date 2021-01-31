@@ -9,9 +9,14 @@ defmodule BaggyBackend.HousesTest do
     alias BaggyBackend.Houses.House
 
     test "list_houses/0 returns all houses" do
-      user = fixture(:user, :valid_attrs)
-      # house = fixture(:house, :valid_attrs)
-      assert Houses.list_houses(user.uuid) == [user]
+      houses_users =
+        fixture(:houses_users, :valid_attrs)
+        |> BaggyBackend.Repo.preload(:user)
+        |> BaggyBackend.Repo.preload(:house)
+
+      %{house: house, user: user} = houses_users
+
+      assert Houses.list_houses(user) == [house]
     end
 
     test "get_house!/1 returns the house with given id" do
