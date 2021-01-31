@@ -36,4 +36,11 @@ defmodule BaggyBackendWeb.FallbackController do
     |> put_view(BaggyBackendWeb.ErrorView)
     |> render(:"422", error: error_message)
   end
+
+  def call(conn, {:error, :unauthorized, error_message}) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(BaggyBackendWeb.ErrorView)
+    |> render(:"401", error: error_message)
+  end
 end
