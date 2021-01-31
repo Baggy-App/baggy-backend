@@ -18,7 +18,7 @@ defmodule BaggyBackend.Fixture.HousesUsers do
     assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user_uuid}
 
     {:ok, houses_users} =
-      Houses.create_houses_users(attrs |> Map.merge(overwrite_attrs) |> Map.merge(assocs))
+      Houses.create_houses_users(attrs |> Map.merge(assocs) |> Map.merge(overwrite_attrs))
 
     houses_users
   end
