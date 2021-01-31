@@ -24,6 +24,10 @@ defmodule BaggyBackendWeb do
       import Plug.Conn
       import BaggyBackendWeb.Gettext
       alias BaggyBackendWeb.Router.Helpers, as: Routes
+
+      def current_user(conn) do
+        Guardian.Plug.current_resource(conn)
+      end
     end
   end
 
