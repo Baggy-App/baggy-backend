@@ -12,11 +12,9 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
     with %{} = houses_users_params <-
            Params.filter_params(houses_users_params, ["house_id", "user_uuid", "passcode"]),
          %House{} <-
-           get_house_and_check_permission(
+           get_house_and_check_passcode(
              houses_users_params["house_id"],
-             houses_users_params["passcode"],
-             # current_user
-             nil
+             houses_users_params["passcode"]
            ),
          {:ok, %HousesUsers{} = houses_users} <-
            Houses.create_houses_users(houses_users_params) do
@@ -34,9 +32,7 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
          %House{} <-
            get_house_and_check_permission(
              houses_users.house_id,
-             houses_users_params["passcode"],
-             # current_user
-             nil
+             current_user(conn)
            ),
          {:ok, %HousesUsers{} = houses_users} <-
            Houses.update_houses_users(houses_users, update_params) do
@@ -52,24 +48,34 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersController do
          %House{} <-
            get_house_and_check_permission(
              houses_users.house_id,
-             houses_users_params["passcode"],
-             # current_user
-             nil
+             current_user(conn)
            ),
          {:ok, %HousesUsers{}} <- Houses.delete_houses_users(houses_users) do
       send_resp(conn, :no_content, "")
     end
   end
 
-  defp get_house_and_check_permission(house_id, passcode, _user) do
+  defp get_house_and_check_passcode(house_id, passcode) do
     try do
       house = Houses.get_house!(house_id)
 
-      if House.correct_passcode?(house, passcode) && House.is_owner?(house, nil),
+      if House.correct_passcode?(house, passcode),
         do: house,
         else:
-          {:error, :unprocessable_entity,
-           "Wrong passcode for house or user insufficient permissions."}
+          {:error, :unauthorized, "Wrong passcode for house or user insufficient permissions."}
+    rescue
+      Ecto.NoResultsError -> {:error, :not_found, "House not found."}
+    end
+  end
+
+  defp get_house_and_check_permission(house_id, user) do
+    try do
+      house = Houses.get_house!(house_id)
+
+      if House.member?(house, user, true),
+        do: house,
+        else:
+          {:error, :unauthorized, "Wrong passcode for house or user insufficient permissions."}
     rescue
       Ecto.NoResultsError -> {:error, :not_found, "House not found."}
     end
