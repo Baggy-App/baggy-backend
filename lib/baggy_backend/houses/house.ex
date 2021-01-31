@@ -6,6 +6,8 @@ defmodule BaggyBackend.Houses.House do
   import Ecto.Changeset
   alias BaggyBackend.{Houses.House.Validator, Products}
 
+  import Ecto.Query, warn: false
+
   schema "houses" do
     field :code, :string
     field :name, :string
@@ -30,7 +32,13 @@ defmodule BaggyBackend.Houses.House do
     if house, do: house.passcode == passcode, else: raise(ArgumentError, "Empty house.")
   end
 
-  def is_owner?(_house, _user) do
-    true
+  def member?(house, user, require_is_owner) do
+    query =
+      from hu in BaggyBackend.Houses.HousesUsers,
+        where: hu.house_id == ^house.id and hu.user_uuid == ^user.uuid
+
+    assoc = BaggyBackend.Repo.one(query)
+
+    assoc && (!require_is_owner || (require_is_owner && assoc.is_owner))
   end
 end
