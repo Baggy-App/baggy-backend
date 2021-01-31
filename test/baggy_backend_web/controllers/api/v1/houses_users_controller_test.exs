@@ -8,15 +8,22 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersControllerTest do
   @invalid_attrs %{is_owner: nil}
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    user = fixture(:user, :valid_attrs)
+    {:ok, token, _claims} = BaggyBackend.Guardian.encode_and_sign(%{:id => user.uuid})
+
+    conn =
+      conn
+      |> put_req_header("accept", "application/json")
+      |> put_req_header("authorization", "Bearer #{token}")
+
+    %{conn: conn, user: user}
   end
 
   describe "create houses_users" do
-    test "renders success", %{conn: conn} do
+    test "renders success when data is valid", %{conn: conn, user: user} do
       %{id: house_id, passcode: house_passcode} = fixture(:house, :valid_attrs)
-      %{uuid: user_uuid} = fixture(:user, :valid_attrs)
 
-      assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user_uuid}
+      assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user.uuid}
 
       create_attrs = Map.merge(attrs(:houses_users, :valid_attrs), assocs)
 
@@ -113,8 +120,12 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersControllerTest do
     end
   end
 
-  defp create_houses_users(_) do
-    houses_users = fixture(:houses_users, :valid_attrs)
+  defp create_houses_users(%{user: user}) do
+    house = fixture(:house, :valid_attrs, %{code: "anycode"})
+
+    houses_users =
+      fixture(:houses_users, :valid_attrs, %{house_id: house.id, user_uuid: user.uuid})
+
     %{houses_users: BaggyBackend.Repo.preload(houses_users, :house)}
   end
 end
