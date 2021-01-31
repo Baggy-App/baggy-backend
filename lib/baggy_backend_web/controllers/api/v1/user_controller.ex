@@ -17,19 +17,20 @@ defmodule BaggyBackendWeb.Api.V1.UserController do
   end
 
   def show(conn, _params) do
-    user = Guardian.Plug.current_resource(conn)
-    render(conn, "show.json", user: user)
+    render(conn, "show.json", user: current_user(conn))
   end
 
   def update(conn, %{"user" => user_params}) do
-    user = Guardian.Plug.current_resource(conn)
+    user = current_user(conn)
+
     with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
       render(conn, "show.json", user: user)
     end
   end
 
   def delete(conn, _params) do
-    user = Guardian.Plug.current_resource(conn)
+    user = current_user(conn)
+
     with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
     end
