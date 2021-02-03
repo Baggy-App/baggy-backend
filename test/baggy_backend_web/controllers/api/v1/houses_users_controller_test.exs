@@ -25,7 +25,7 @@ defmodule BaggyBackendWeb.Api.V1.HousesUsersControllerTest do
 
       assocs = %{house_id: house_id, passcode: house_passcode, user_uuid: user.uuid}
 
-      create_attrs = Map.merge(attrs(:houses_users, :valid_attrs), assocs)
+      create_attrs = attrs(:houses_users, :valid_attrs) |> Map.merge(assocs)
 
       conn =
         post(conn, Routes.api_v1_houses_users_path(conn, :create), houses_users: create_attrs)
