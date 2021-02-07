@@ -2,7 +2,6 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
   use BaggyBackendWeb.ConnCase
 
   alias BaggyBackend.Products.ProductList
-
   import BaggyBackend.Fixture
 
   @create_attrs attrs(:product_list, :valid_attrs)
@@ -10,27 +9,35 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
   @invalid_attrs attrs(:product_list, :invalid_attrs)
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    user = fixture(:user, :valid_attrs)
+    {:ok, token, _claims} = BaggyBackend.Guardian.encode_and_sign(%{:id => user.uuid})
+
+    conn =
+      conn
+      |> put_req_header("accept", "application/json")
+      |> put_req_header("authorization", "Bearer #{token}")
+
+    %{conn: conn, user: user}
   end
 
   describe "index" do
-    test "lists all product_lists", %{conn: conn} do
-      conn = get(conn, Routes.api_v1_product_list_path(conn, :index))
+    setup [:create_house]
+
+    test "lists all product_lists from house", %{conn: conn, house: house} do
+      conn = get(conn, Routes.api_v1_product_list_path(conn, :index, house_id: house.id))
       assert json_response(conn, 200)["data"] == []
     end
   end
 
   describe "create product_list" do
-    test "renders product_list when data is valid", %{conn: conn} do
-      house = fixture(:house, :valid_attrs)
+    setup [:create_house]
 
+    test "renders product_list when data is valid", %{conn: conn, house: house} do
       create_attrs = Map.merge(@create_attrs, %{house_id: house.id})
-
       conn =
         post(conn, Routes.api_v1_product_list_path(conn, :create), product_list: create_attrs)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
-
       conn = get(conn, Routes.api_v1_product_list_path(conn, :show, id))
 
       assert %{
@@ -48,14 +55,16 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
   end
 
   describe "update product_list" do
-    setup [:create_product_list]
+    setup [:create_house, :create_product_list]
 
     test "renders product_list when data is valid", %{
       conn: conn,
       product_list: %ProductList{id: id} = product_list
     } do
       conn =
-        put(conn, Routes.api_v1_product_list_path(conn, :update, product_list),
+        put(
+          conn,
+          Routes.api_v1_product_list_path(conn, :update, product_list),
           product_list: Map.take(@update_attrs, ["name"])
         )
 
@@ -71,7 +80,9 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
 
     test "renders errors when data is invalid", %{conn: conn, product_list: product_list} do
       conn =
-        put(conn, Routes.api_v1_product_list_path(conn, :update, product_list),
+        put(
+          conn,
+          Routes.api_v1_product_list_path(conn, :update, product_list),
           product_list: @invalid_attrs
         )
 
@@ -80,7 +91,7 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
   end
 
   describe "delete product_list" do
-    setup [:create_product_list]
+    setup [:create_house, :create_product_list]
 
     test "deletes chosen product_list", %{conn: conn, product_list: product_list} do
       conn = delete(conn, Routes.api_v1_product_list_path(conn, :delete, product_list))
@@ -92,8 +103,23 @@ defmodule BaggyBackendWeb.Api.V1.ProductListControllerTest do
     end
   end
 
-  defp create_product_list(_) do
-    house = fixture(:house, :valid_attrs)
+  defp create_product_list(%{house: house}) do
     %{product_list: fixture(:product_list, :valid_attrs, %{house_id: house.id})}
+  end
+
+  defp create_house(%{user: user}) do
+    house = fixture(:house, :valid_attrs, %{code: "code1"})
+
+    fixture(
+      :houses_users,
+      :valid_attrs,
+      %{
+        user_uuid: user.uuid,
+        house_id: house.id,
+        is_owner: true
+      }
+    )
+
+    %{house: house}
   end
 end

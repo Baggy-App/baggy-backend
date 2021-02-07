@@ -36,6 +36,7 @@ defmodule BaggyBackend.Products do
 
   """
   def get_product_list!(id), do: Repo.get!(ProductList, id)
+  def get_product_list!(id, assoc) when is_atom(assoc), do: Repo.get!(ProductList, id) |> Repo.preload(assoc)
 
   @doc """
   Creates a product_list.

@@ -14,10 +14,11 @@ defmodule BaggyBackendWeb.ParamsHandler do
   end
 
   def validate_required_params(params, required_params) do
-    if required_params |> Enum.all?(&Map.has_key?(params, &1)),
-      do: true,
-      else:
-        {:error, :unprocessable_entity,
+    if required_params
+       |> Enum.all?(&Map.has_key?(params, &1)),
+       do: true,
+       else:
+         {:error, :unprocessable_entity,
          "The required params are '#{Enum.join(required_params, "', '")}'."}
   end
 end
