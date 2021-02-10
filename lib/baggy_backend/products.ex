@@ -230,6 +230,7 @@ defmodule BaggyBackend.Products do
 
   """
   def get_product!(id), do: Repo.get!(Product, id)
+  def get_product!(id, assoc) when is_atom(assoc), do: Repo.get!(Product, id) |> Repo.preload(assoc)
 
   @doc """
   Creates a product.

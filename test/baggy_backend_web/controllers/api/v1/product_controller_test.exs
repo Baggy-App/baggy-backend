@@ -10,7 +10,15 @@ defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
   end
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    user = fixture(:user, :valid_attrs)
+    {:ok, token, _claims} = BaggyBackend.Guardian.encode_and_sign(%{:id => user.uuid})
+
+    conn =
+      conn
+      |> put_req_header("accept", "application/json")
+      |> put_req_header("authorization", "Bearer #{token}")
+
+    %{conn: conn, user: user}
   end
 
   describe "index" do
@@ -21,7 +29,7 @@ defmodule BaggyBackendWeb.Api.V1.ProductControllerTest do
   end
 
   describe "create product" do
-    test "renders product when data is valid", %{conn: conn} do
+    test "renders product when data is valid", %{conn: conn, user: user} do
       assocs = %{
         product_list_id:
           fixture(:product_list, :valid_attrs, %{house_id: fixture(:house, :valid_attrs).id}).id,
