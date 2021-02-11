@@ -57,11 +57,4 @@ defmodule BaggyBackendWeb.Api.V1.ProductController do
     assign(conn, :product, product)
   end
 
-  # TODO: Make this method reusable in controller
-  defp require_house_association(house, user, opts \\ [require_is_owner: false]) do
-    if house
-       |> Houses.House.member?(user, opts[:require_is_owner]),
-       do: :ok,
-       else: {:error, :unauthorized, "Current user is not house owner."}
-  end
 end

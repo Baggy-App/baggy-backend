@@ -24,10 +24,18 @@ defmodule BaggyBackendWeb do
       import Plug.Conn
       import BaggyBackendWeb.Gettext
       alias BaggyBackendWeb.Router.Helpers, as: Routes
+      alias BaggyBackend.Houses
 
       def current_user(conn) do
         Guardian.Plug.current_resource(conn)
       end
+
+      def require_house_association(house, user, opts \\ [require_is_owner: false]) do
+        if house |> Houses.House.member?(user, opts[:require_is_owner]),
+           do: :ok,
+           else: {:error, :unauthorized, "Current user is not house owner."}
+      end
+
     end
   end
 
