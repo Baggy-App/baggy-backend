@@ -6,7 +6,9 @@ defmodule BaggyBackend.Products.ProductList do
   """
   schema "product_lists" do
     field :name, :string
+
     belongs_to :house, BaggyBackend.Houses.House
+    has_many :products, BaggyBackend.Products.Product
 
     timestamps()
   end
